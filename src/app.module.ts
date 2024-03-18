@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CoreModule } from './core/core.module';
+import { CompanyModule } from './company/company.module';
 
 
 @Module({
@@ -9,29 +11,33 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ConfigModule.forRoot({
       cache: true,
       isGlobal: true,
-      envFilePath: ['.env.stage.dev'],
+      envFilePath: ['.env.local.dev'],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const getStage = configService.get('STAGE') === 'PROD'
-        return {
-          ssl: getStage,
-          type: 'mongodb',
-          useUnifiedTopology: true,
-          useNewUrlParser: true,
-          synchronize: true,
-          database: 'i-tapp',
-          port: configService.get('DB_PORT'),
-          autoLoadEntities: true,
-          host: configService.get('DB_HOST')
-        }
+      useFactory: (config: ConfigService) => {
+        const getStage = config.get('STAGE') === 'prod'
+         return {
+           ssl: getStage,
+           type: 'postgres',
+           autoLoadEntities: true,
+           host: config.get('DB_HOST'),
+           port: config.get('DB_PORT'),
+           username: config.get('DB_USERNAME'),
+           password: config.get('DB_PASSWORD'),
+           database: config.get('DB'),
+           synchronize: true,
+           extra: {
+             ssl: getStage ? { rejectUnauthorized: false } : null,
+           },
+         };
 
       }
     }),
-    
     AuthModule,
+    CoreModule,
+    CompanyModule,
   ],
   controllers: [],
   providers: [],
