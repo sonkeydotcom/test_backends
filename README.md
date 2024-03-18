@@ -29,16 +29,34 @@
 ## Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Running the app
+## Running and setting up the app
 
 ```bash
-# development
-$ npm run start
+# steps
+-  create a .env.local.dev in the file dir
 
-# watch mode
+- add the following to the newly created .env.local.dev
+
+- DB_HOST= localhost
+
+- DB_PORT=<your pg port> [default: 5433] for pg15 or [5433]pg 16
+
+- DB_USERNAME= <your pg username>
+
+- DB_PASSWORD=<your pg password>
+
+- DB=i_tapp
+
+- STAGE=dev
+
+- JWT_TIME=2h
+
+- JWT_KEY= generate your own jwt secret key with this command: <node -e "console log(require('crypto').randomBytes(32).toString('hex'))>
+
+# development
 $ npm run start:dev
 
 # production mode
