@@ -9,6 +9,7 @@ export class CompanyController {
   constructor(private readonly companyService: CompanyService) { }
   
   @Post('create')
+    // allow this endpoint to receive media files
   companyCreateAccount(@Body() create: companyDto) {
     return this.companyService.createCompanyAccount(create)
     
@@ -17,4 +18,11 @@ export class CompanyController {
   companyLogin(@Body() dto: companyLoginDto) {
     return this.companyService.login(dto)
   }
+
+
+  
+
+
+
+
 }

@@ -4,9 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Jobs } from './jobs.entity';
 
 @Entity()
 export class Company {
@@ -36,18 +39,28 @@ export class Company {
   @Column()
   address: string;
 
-  @Column()
-  it_duration: number;
-
-  @Column()
-  student_capacity: number;
+  // @Column()
+  // student_capacity: number; this is not needed IMO
+  //NOTE: I moved the it duration column to the jobs entity
 
   @CreateDateColumn()
   createdDate: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
-
   @Column({ type: 'enum', enum: UserRole, default: UserRole.COMPANY })
   role: UserRole;
+
+  @OneToMany(() => Jobs, (jobs) => jobs.company)
+  jobs: Jobs[];
+
+  @Column()
+  shortListedApplicant: number;
+
+  @Column()
+  acceptedApplicant: number;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
+
+  @Column()
+  totalApplicants: number;
 }
