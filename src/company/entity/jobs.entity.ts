@@ -1,34 +1,49 @@
 import {
   Column,
   CreateDateColumn,
+  Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Company as Company } from './company.entity';
+import { Student } from 'src/students/entity/student.entity';
 
+@Entity()
 export class Jobs {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  name: string;
+  title: string;
 
   @Column()
+  level: string;
+
+  @Column({ default: 0 })
   totalApplicants: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp with local time zone' })
   createdDate: Date;
 
-  @Column()
+  @Column({ default: 0 })
   shortListedApplicant: number;
 
-  @UpdateDateColumn()
-  updatedDate: Date;
+  @Column()
+  startDate: Date;
 
   @Column()
+  endDate: Date;
+
+  @UpdateDateColumn({ type: 'timestamp with local time zone' })
+  updatedDate: Date;
+
+  @Column({ default: 0 })
   acceptedApplicant: number;
+
+  @ManyToOne(() => Student, (st) => st.appliedStudent)
+  appliedStudents: Student[];
 
   @ManyToOne(() => Company, (company) => company.jobs, {
     onDelete: 'CASCADE',
@@ -36,6 +51,25 @@ export class Jobs {
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
+  @Column({ default: 0 })
+  duration: number;
+
+  @ManyToOne(() => Student, (student) => student.jobs)
+  @JoinColumn({ name: 'studentId' })
+  acceptedStudent: Student[];
+
   @Column()
-  it_duration: number;
+  address: string;
+
+  @Column()
+  city: string;
+
+  @Column()
+  state: string;
+
+  @Column()
+  description: string;
+
+  @Column()
+  industry: string;
 }

@@ -5,11 +5,13 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Jobs } from './jobs.entity';
+import { Student } from 'src/students/entity/student.entity';
 
 @Entity()
 export class Company {
@@ -54,6 +56,9 @@ export class Company {
 
   @Column()
   shortListedApplicant: number;
+  
+  @ManyToOne(() => Student, (stu) => stu.saved)
+  savedStudent: Student[]
 
   @Column()
   acceptedApplicant: number;

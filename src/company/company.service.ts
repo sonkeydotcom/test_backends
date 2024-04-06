@@ -14,6 +14,7 @@ import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
 import { Jobs } from './entity/jobs.entity';
 import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
 import { globalPaginationHelper } from 'src/core/helpers/paginationHelper';
+import { CreateJobDto } from './dto/jobs.dto';
 
 @Injectable()
 export class CompanyService {
@@ -27,7 +28,7 @@ export class CompanyService {
     try {
       const checkIf = await this.companyRepository.findOne({
         where: {
-          email: dto.email,
+          email: dto.email.toLowerCase(),
         },
       });
 
@@ -109,11 +110,11 @@ export class CompanyService {
             id: v.id,
             totalApplicants: v?.totalApplicants,
             createdDate: v.createdDate,
-            jobName: v?.name,
+            position: v?.title,
             acceptedApplicantPerJob: v?.acceptedApplicant,
             shortListedApplicantPerJob: v.shortListedApplicant,
             updatedDate: v?.updatedDate,
-            duration: v.it_duration,
+            duration: v.duration,
           })),
           id: findCompany.id,
           name: findCompany.name,
@@ -173,7 +174,6 @@ export class CompanyService {
           jobs: true,
         },
       });
-
       return {
         message: 'successful',
         statusCode: HttpStatus.OK,
@@ -182,11 +182,11 @@ export class CompanyService {
             id: v.id,
             totalApplicants: v?.totalApplicants,
             createdDate: v.createdDate,
-            jobName: v?.name,
+            jobName: v?.title,
             acceptedApplicantPerJob: v?.acceptedApplicant,
             shortListedApplicantPerJob: v.shortListedApplicant,
             updatedDate: v?.updatedDate,
-            duration: v.it_duration,
+            duration: v.duration,
           })),
           id: companies.id,
           name: companies.name,
@@ -202,6 +202,93 @@ export class CompanyService {
           shortlistedApplicants: companies.shortListedApplicant,
         },
         totalCount: count,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async getAcceptedApplicants(jobId: string): Promise<globalApiResponseDto> {
+    // subject to pagination
+    try {
+      const findCompanyJob = await this.jobRepository.findOne({
+        where: {
+          id: jobId,
+        },
+      });
+      if (findCompanyJob.acceptedApplicant === 0) {
+        return {
+          message: 'you have no accepted applicant yet',
+          statusCode: HttpStatus.OK,
+        };
+      }
+      return {
+        message: 'successful',
+        statusCode: HttpStatus.OK,
+        data: {
+          jobId: findCompanyJob.id,
+          position: findCompanyJob.title,
+          duration: findCompanyJob.duration,
+          startDate: findCompanyJob.startDate,
+          endDate: findCompanyJob.endDate,
+          createdDate: findCompanyJob.createdDate,
+          student: findCompanyJob.acceptedStudent.map((v) => ({
+            studentId: v?.id,
+            createdDate: v?.createdDate,
+            course: v?.courseOfStudy,
+            CGPA: v?.CGPA,
+            school: v?.school,
+            department: v?.department,
+            currentLevel: v?.level,
+          })),
+        },
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async getShortListedStudent(id: string): Promise<globalApiResponseDto> {
+    // subject to pagination
+    try {
+      const getCompany = await this.jobRepository.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (getCompany.shortListedApplicant === 0) {
+        return {
+          message: 'you have no accepted applicant yet',
+          statusCode: HttpStatus.OK,
+        };
+      }
+      return {
+        message: 'successful',
+        statusCode: HttpStatus.OK,
+        // data: getCompany.
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async createdNewJob(
+    company: Company,
+    dto: CreateJobDto,
+  ): Promise<globalApiResponseDto> {
+    try {
+      const createJob = this.jobRepository.create({
+        company: {
+          id: company.id,
+        },
+        ...dto,
+      });
+      await this.jobRepository.save(createJob);
+      return {
+        message: 'successful',
+        statusCode: HttpStatus.OK,
+        data: createJob,
       };
     } catch (err) {
       return coreErrorHelper(err);
