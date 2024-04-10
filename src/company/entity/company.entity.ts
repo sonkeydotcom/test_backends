@@ -12,6 +12,8 @@ import {
 } from 'typeorm';
 import { Jobs } from './jobs.entity';
 import { Student } from 'src/students/entity/student.entity';
+import { AcceptedApplicants } from './applicant/accepted-applicant.entity';
+import { ShortlistedApplicant } from './applicant/shortlisted-applicant.entity';
 
 @Entity()
 export class Company {
@@ -41,10 +43,6 @@ export class Company {
   @Column()
   address: string;
 
-  // @Column()
-  // student_capacity: number; this is not needed IMO
-  //NOTE: I moved the it duration column to the jobs entity
-
   @CreateDateColumn()
   createdDate: Date;
 
@@ -54,14 +52,14 @@ export class Company {
   @OneToMany(() => Jobs, (jobs) => jobs.company)
   jobs: Jobs[];
 
-  @Column()
-  shortListedApplicant: number;
-  
-  @ManyToOne(() => Student, (stu) => stu.saved)
-  savedStudent: Student[]
+  @OneToMany(() => ShortlistedApplicant, (sap) => sap.company)
+  shortListedApplicant: ShortlistedApplicant[];
 
-  @Column()
-  acceptedApplicant: number;
+  @ManyToOne(() => Student, (stu) => stu.saved)
+  savedStudent: Student[];
+
+  @OneToMany(() => AcceptedApplicants, (ap) => ap.company)
+  acceptedApplicant: AcceptedApplicants[];
 
   @UpdateDateColumn()
   updatedDate: Date;

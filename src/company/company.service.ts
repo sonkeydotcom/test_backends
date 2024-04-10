@@ -15,6 +15,8 @@ import { Jobs } from './entity/jobs.entity';
 import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
 import { globalPaginationHelper } from 'src/core/helpers/paginationHelper';
 import { CreateJobDto } from './dto/jobs.dto';
+import { AcceptedApplicants } from './entity/applicant/accepted-applicant.entity';
+import { ShortlistedApplicant } from './entity/applicant/shortlisted-applicant.entity';
 
 @Injectable()
 export class CompanyService {
@@ -22,6 +24,8 @@ export class CompanyService {
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
     private jobRepository: Repository<Jobs>,
+    private acceptedApplicantsRepository: Repository<AcceptedApplicants>,
+    private shortedListedApplicantsRepository: Repository<ShortlistedApplicant>,
   ) {}
 
   async createCompanyAccount(dto: companyDto) {
@@ -72,7 +76,7 @@ export class CompanyService {
       }
       if (findCompany) {
         const checkPassword = await compareHash(
-          dto.password,
+          password,
           findCompany.password,
         );
         if (!checkPassword) {
@@ -136,12 +140,12 @@ export class CompanyService {
   }
 
   async getApplicantsByCategory(
-    company: Company,
+    id: string,
   ): Promise<globalApiResponseDto> {
     try {
       const getTotal = await this.companyRepository.findOne({
         where: {
-          id: company.id,
+          id: id,
         },
         cache: true,
         relations: {
@@ -208,31 +212,43 @@ export class CompanyService {
     }
   }
 
-  async getAcceptedApplicants(jobId: string): Promise<globalApiResponseDto> {
-    // subject to pagination
+  async getAcceptedApplicants(
+    companyId: string,
+    dto: GlobalPaginationDto,
+  ): Promise<globalApiResponseDto> {
     try {
-      const findCompanyJob = await this.jobRepository.findOne({
+      const { skip, take } = globalPaginationHelper(dto);
+      const [data, count] = await this.acceptedApplicantsRepository.find({
+        skip,
+        take,
         where: {
-          id: jobId,
+          company: {
+            id: companyId,
+          },
+        },
+        relations: {
+          company: {
+            jobs: true,
+          },
+          students: true,
         },
       });
-      if (findCompanyJob.acceptedApplicant === 0) {
-        return {
-          message: 'you have no accepted applicant yet',
-          statusCode: HttpStatus.OK,
-        };
-      }
       return {
         message: 'successful',
         statusCode: HttpStatus.OK,
+        totalCount: count,
         data: {
-          jobId: findCompanyJob.id,
-          position: findCompanyJob.title,
-          duration: findCompanyJob.duration,
-          startDate: findCompanyJob.startDate,
-          endDate: findCompanyJob.endDate,
-          createdDate: findCompanyJob.createdDate,
-          student: findCompanyJob.acceptedStudent.map((v) => ({
+          companyId: data?.company?.id,
+          name: data.company.name,
+          job: data.company.jobs.map((j) => ({
+            id: j.id,
+            position: j.title,
+            duration: j.duration,
+            startDate: j.startDate,
+            endDate: j.endDate,
+            createdDate: j.createdDate,
+          })),
+          student: data.students.map((v) => ({
             studentId: v?.id,
             createdDate: v?.createdDate,
             course: v?.courseOfStudy,
@@ -248,25 +264,51 @@ export class CompanyService {
     }
   }
 
-  async getShortListedStudent(id: string): Promise<globalApiResponseDto> {
-    // subject to pagination
+  async getShortListedStudent(
+    id: string,
+    dto: GlobalPaginationDto,
+  ): Promise<globalApiResponseDto> {
     try {
-      const getCompany = await this.jobRepository.findOne({
+      const { skip, take } = globalPaginationHelper(dto);
+      const [data, count] = await this.shortedListedApplicantsRepository.find({
+        skip,
+        take,
         where: {
-          id,
+          company: {
+            id: id,
+          },
+        },
+        relations: {
+          company: {
+            jobs: true,
+          },
+          student: true,
         },
       });
-
-      if (getCompany.shortListedApplicant === 0) {
-        return {
-          message: 'you have no accepted applicant yet',
-          statusCode: HttpStatus.OK,
-        };
-      }
       return {
         message: 'successful',
         statusCode: HttpStatus.OK,
-        // data: getCompany.
+        data: {
+          companyId: data.company.id,
+          name: data.company.name,
+          job: data.company.jobs.map((j) => ({
+            id: j.id,
+            position: j.title,
+            duration: j.duration,
+            startDate: j.startDate,
+            endDate: j.endDate,
+            createdDate: j.createdDate,
+          })),
+          student: data.student.map((v) => ({
+            studentId: v?.id,
+            createdDate: v?.createdDate,
+            course: v?.courseOfStudy,
+            CGPA: v?.CGPA,
+            school: v?.school,
+            department: v?.department,
+            currentLevel: v?.level,
+          })),
+        },
       };
     } catch (err) {
       return coreErrorHelper(err);
@@ -274,13 +316,13 @@ export class CompanyService {
   }
 
   async createdNewJob(
-    company: Company,
+    id: string,
     dto: CreateJobDto,
   ): Promise<globalApiResponseDto> {
     try {
       const createJob = this.jobRepository.create({
         company: {
-          id: company.id,
+          id: id,
         },
         ...dto,
       });
