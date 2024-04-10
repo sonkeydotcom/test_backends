@@ -1,9 +1,20 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { companyDto, companyLoginDto } from './dto/company.dto';
 import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
 import { CreateJobDto } from './dto/jobs.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RoleGuard, Roles } from 'src/auth/guard/roles.guard';
+import { UserRole } from 'src/auth/entities/users.entity';
 
 @ApiBearerAuth()
 @ApiTags('Company')
@@ -34,6 +45,8 @@ export class CompanyController {
   }
 
   @Get('all')
+  @UseGuards(AuthGuard(), RoleGuard)
+  @Roles(UserRole.ADMIN)
   // TODO: protect this route for only admin
   getAllCompanies(@Query() dto: GlobalPaginationDto) {
     return this.companyService.getAllCompanies(dto);
@@ -52,11 +65,11 @@ export class CompanyController {
     @Param('id') id: string,
     @Query() dto: GlobalPaginationDto,
   ) {
-    return this.companyService.getShortListedStudent(id, dto)
+    return this.companyService.getShortListedStudent(id, dto);
   }
 
   @Post('/job/new/:id')
   createNewJob(@Body() dto: CreateJobDto, @Param('id') id: string) {
-    return this.companyService.createdNewJob(id, dto)
+    return this.companyService.createdNewJob(id, dto);
   }
 }

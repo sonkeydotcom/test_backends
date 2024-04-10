@@ -12,8 +12,8 @@ import {
 } from 'typeorm';
 import { Jobs } from './jobs.entity';
 import { Student } from 'src/students/entity/student.entity';
-import { AcceptedApplicants } from './applicant/accepted-applicant.entity';
-import { ShortlistedApplicant } from './applicant/shortlisted-applicant.entity';
+import { AcceptedApplicants } from './accepted-applicant.entity';
+import { ShortlistedApplicant } from './shortlisted-applicant.entity';
 
 @Entity()
 export class Company {

@@ -7,27 +7,27 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Company } from '../company.entity';
+import { Company } from './company.entity';
 import { Student } from 'src/students/entity/student.entity';
 
 @Entity()
-export class ShortlistedApplicant {
+export class AcceptedApplicants {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(() => Student, (student) => student.shortlistedApplicants, {
+  @CreateDateColumn({ type: 'timestamp with time zone' })
+  createdAt: Date;
+
+  @ManyToOne(() => Company, (company) => company.acceptedApplicant)
+  @JoinColumn({ name: 'companyId' })
+  company: Company;
+
+  @OneToMany(() => Student, (student) => student.acceptedApplicants, {
     nullable: true,
   })
   @JoinColumn({ name: 'studentId' })
-  student: Student[];
-
-  @CreateDateColumn({ type: 'timestamp with time zone' })
-  createdDate: Date;
+  students: Student[];
 
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedDate: Date;
-
-  @ManyToOne(() => Company, (company) => company.shortListedApplicant)
-  @JoinColumn({ name: 'companyId' })
-  company: Company;
 }

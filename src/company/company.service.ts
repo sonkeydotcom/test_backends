@@ -15,16 +15,19 @@ import { Jobs } from './entity/jobs.entity';
 import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
 import { globalPaginationHelper } from 'src/core/helpers/paginationHelper';
 import { CreateJobDto } from './dto/jobs.dto';
-import { AcceptedApplicants } from './entity/applicant/accepted-applicant.entity';
-import { ShortlistedApplicant } from './entity/applicant/shortlisted-applicant.entity';
+import { AcceptedApplicants } from './entity/accepted-applicant.entity';
+import { ShortlistedApplicant } from './entity/shortlisted-applicant.entity';
 
 @Injectable()
 export class CompanyService {
   constructor(
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
+    @InjectRepository(Jobs)
     private jobRepository: Repository<Jobs>,
+    @InjectRepository(AcceptedApplicants)
     private acceptedApplicantsRepository: Repository<AcceptedApplicants>,
+    @InjectRepository(ShortlistedApplicant)
     private shortedListedApplicantsRepository: Repository<ShortlistedApplicant>,
   ) {}
 
@@ -75,10 +78,7 @@ export class CompanyService {
         throw new NotFoundException('the email address used does not exist');
       }
       if (findCompany) {
-        const checkPassword = await compareHash(
-          password,
-          findCompany.password,
-        );
+        const checkPassword = await compareHash(password, findCompany.password);
         if (!checkPassword) {
           throw new ForbiddenException('the password or email is incorrect');
         }
@@ -139,9 +139,7 @@ export class CompanyService {
     }
   }
 
-  async getApplicantsByCategory(
-    id: string,
-  ): Promise<globalApiResponseDto> {
+  async getApplicantsByCategory(id: string): Promise<globalApiResponseDto> {
     try {
       const getTotal = await this.companyRepository.findOne({
         where: {

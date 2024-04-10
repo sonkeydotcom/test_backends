@@ -24,7 +24,7 @@ export class Jobs {
   @Column({ default: 0 })
   totalApplicants: number;
 
-  @CreateDateColumn({ type: 'timestamp with local time zone' })
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   createdDate: Date;
 
   @Column({ default: 0 })
@@ -36,7 +36,7 @@ export class Jobs {
   @Column()
   endDate: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with local time zone' })
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedDate: Date;
 
   @Column({ default: 0 })

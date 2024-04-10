@@ -1,6 +1,6 @@
 import { UserRole } from 'src/auth/entities/users.entity';
-import { AcceptedApplicants } from 'src/company/entity/applicant/accepted-applicant.entity';
-import { ShortlistedApplicant } from 'src/company/entity/applicant/shortlisted-applicant.entity';
+import { AcceptedApplicants } from 'src/company/entity/accepted-applicant.entity';
+import { ShortlistedApplicant } from 'src/company/entity/shortlisted-applicant.entity';
 import { Company } from 'src/company/entity/company.entity';
 import { Jobs } from 'src/company/entity/jobs.entity';
 import {
@@ -19,10 +19,10 @@ export class Student {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @CreateDateColumn({ type: 'timestamp with local time zone' })
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   createdDate: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with local time zone' })
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedDate: Date;
 
   @OneToMany(() => Jobs, (jobs) => jobs.acceptedStudent)

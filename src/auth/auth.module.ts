@@ -25,5 +25,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
   ],
+  exports: [PassportModule]
 })
 export class AuthModule {}
