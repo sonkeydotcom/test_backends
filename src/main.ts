@@ -11,7 +11,7 @@ async function bootstrap() {
     .setDescription('Api Documentation for I-tapp')
     .setVersion('1.0')
     .addTag('I-Tapp')
-    .addBasicAuth()
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('', app, document);

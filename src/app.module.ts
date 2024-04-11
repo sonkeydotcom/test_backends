@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreModule } from './core/core.module';
 import { CompanyModule } from './company/company.module';
+import { StudentsModule } from './students/students.module';
 
 
 @Module({
@@ -38,6 +39,7 @@ import { CompanyModule } from './company/company.module';
     AuthModule,
     CoreModule,
     CompanyModule,
+    StudentsModule,
   ],
   controllers: [],
   providers: [],

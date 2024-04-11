@@ -4,9 +4,16 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Jobs } from './jobs.entity';
+import { Student } from 'src/students/entity/student.entity';
+import { AcceptedApplicants } from './accepted-applicant.entity';
+import { ShortlistedApplicant } from './shortlisted-applicant.entity';
 
 @Entity()
 export class Company {
@@ -36,18 +43,27 @@ export class Company {
   @Column()
   address: string;
 
-  @Column()
-  it_duration: number;
-
-  @Column()
-  student_capacity: number;
-
   @CreateDateColumn()
   createdDate: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
-
   @Column({ type: 'enum', enum: UserRole, default: UserRole.COMPANY })
   role: UserRole;
+
+  @OneToMany(() => Jobs, (jobs) => jobs.company)
+  jobs: Jobs[];
+
+  @OneToMany(() => ShortlistedApplicant, (sap) => sap.company)
+  shortListedApplicant: ShortlistedApplicant[];
+
+  @ManyToOne(() => Student, (stu) => stu.saved)
+  savedStudent: Student[];
+
+  @OneToMany(() => AcceptedApplicants, (ap) => ap.company)
+  acceptedApplicant: AcceptedApplicants[];
+
+  @UpdateDateColumn()
+  updatedDate: Date;
+
+  @Column()
+  totalApplicants: number;
 }
