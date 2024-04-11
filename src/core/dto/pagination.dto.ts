@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsEnum, IsEmail, IsBoolean } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
 
 export enum OrderEnum {
   ASC = 'ASC',
@@ -27,4 +27,7 @@ export class GlobalPaginationDto {
   @IsOptional()
   order?: 'ASC' | 'DESC';
 
+  @ApiProperty({required: false})
+  @IsOptional()
+  date: string;
 }
