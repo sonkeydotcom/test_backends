@@ -7,7 +7,6 @@ import { Jobs } from './entity/jobs.entity';
 import { ShortlistedApplicant } from './entity/shortlisted-applicant.entity';
 import { AcceptedApplicants } from './entity/accepted-applicant.entity';
 import { Student } from 'src/students/entity/student.entity';
-import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({

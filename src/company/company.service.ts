@@ -17,6 +17,7 @@ import { globalPaginationHelper } from 'src/core/helpers/paginationHelper';
 import { CreateJobDto } from './dto/jobs.dto';
 import { AcceptedApplicants } from './entity/accepted-applicant.entity';
 import { ShortlistedApplicant } from './entity/shortlisted-applicant.entity';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class CompanyService {
@@ -29,6 +30,7 @@ export class CompanyService {
     private acceptedApplicantsRepository: Repository<AcceptedApplicants>,
     @InjectRepository(ShortlistedApplicant)
     private shortedListedApplicantsRepository: Repository<ShortlistedApplicant>,
+    private authService: AuthService,
   ) {}
 
   async createCompanyAccount(dto: companyDto) {
@@ -75,7 +77,9 @@ export class CompanyService {
         },
       });
       if (!findCompany) {
-        throw new NotFoundException('the email address used does not exist');
+        throw new NotFoundException(
+          'the email address or password does not exist',
+        );
       }
       if (findCompany) {
         const checkPassword = await compareHash(password, findCompany.password);
@@ -83,10 +87,15 @@ export class CompanyService {
           throw new ForbiddenException('the password or email is incorrect');
         }
         // send notification maybe if needed
+        const token = await this.authService.generateAuthToken({
+          email: findCompany.email,
+          userId: findCompany.id,
+          role: findCompany.role,
+        });
         return {
           statusCode: HttpStatus.OK,
           message: 'login successful',
-          data: findCompany,
+          data: { company: findCompany, accessToken: token },
         };
       }
     } catch (err) {
