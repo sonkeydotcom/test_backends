@@ -15,20 +15,24 @@ import { CreateJobDto } from './dto/jobs.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard, Roles } from 'src/auth/guard/roles.guard';
 import { UserRole } from 'src/auth/entities/users.entity';
+import { Public } from 'src/auth/decorator/is-public.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Company')
+@UseGuards(AuthGuard())
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
+  @Public()
   @Post('create')
   // allow this endpoint to receive media files
   companyCreateAccount(@Body() create: companyDto) {
     return this.companyService.createCompanyAccount(create);
   }
 
-  @Post('login') //TODO: make an is public endpoint for this
+  @Public()
+  @Post('login')
   companyLogin(@Body() dto: companyLoginDto) {
     return this.companyService.login(dto);
   }
@@ -39,7 +43,6 @@ export class CompanyController {
   }
 
   @Get('category')
-  // TODO: get company via req
   applicantsByCategory(@Param('id') id: string) {
     return this.companyService.getApplicantsByCategory(id);
   }
@@ -47,7 +50,6 @@ export class CompanyController {
   @Get('all')
   @UseGuards(AuthGuard(), RoleGuard)
   @Roles(UserRole.ADMIN)
-  // TODO: protect this route for only admin
   getAllCompanies(@Query() dto: GlobalPaginationDto) {
     return this.companyService.getAllCompanies(dto);
   }
