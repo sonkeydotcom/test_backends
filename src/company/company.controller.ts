@@ -25,36 +25,36 @@ export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Public()
-  @Post('create')
+  @Post('/create')
   // allow this endpoint to receive media files
   companyCreateAccount(@Body() create: companyDto) {
     return this.companyService.createCompanyAccount(create);
   }
 
   @Public()
-  @Post('login')
+  @Post('/login')
   companyLogin(@Body() dto: companyLoginDto) {
     return this.companyService.login(dto);
   }
 
-  @Get(':id')
+  @Get('/:id')
   CompanyById(@Param('id') id: string, @Query() email?: string) {
     return this.companyService.getById(id, email);
   }
 
-  @Get('category')
+  @Get('/category')
   applicantsByCategory(@Param('id') id: string) {
     return this.companyService.getApplicantsByCategory(id);
   }
 
-  @Get('all')
+  @Get('/admin/all')
   @UseGuards(AuthGuard(), RoleGuard)
   @Roles(UserRole.ADMIN)
   getAllCompanies(@Query() dto: GlobalPaginationDto) {
     return this.companyService.getAllCompanies(dto);
   }
 
-  @Get('applicants/accepted/:companyId')
+  @Get('/applicants/accepted/:companyId')
   getAllAcceptedApplicants(
     @Param('companyId') companyId: string,
     @Query() dto: GlobalPaginationDto,

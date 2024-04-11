@@ -1,8 +1,24 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { StudentsService } from './students.service';
+import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { UserRole } from 'src/auth/entities/users.entity';
+import { RoleGuard, Roles } from 'src/auth/guard/roles.guard';
+import { StudentDto } from './dto/student.dto';
 
+@ApiTags('Student')
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
+  @Get('/admin/searching')
+  @UseGuards(AuthGuard(), RoleGuard)
+  @Roles(UserRole.ADMIN)
+  getSearchStudent(
+    @Query() dto: GlobalPaginationDto,
+    @Query() studentDto: StudentDto,
+  ) {
+    return this.studentsService.getSearchingStudent(studentDto, dto);
+  }
 }
