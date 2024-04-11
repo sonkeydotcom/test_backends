@@ -11,6 +11,7 @@ export enum UserRole {
   STUDENT = 'student',
   COMPANY = 'company',
   ADMIN = 'admin',
+  USER = 'user'
 }
 @Entity()
 export class User {
@@ -24,7 +25,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.STUDENT })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
