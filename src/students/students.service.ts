@@ -20,7 +20,51 @@ export class StudentsService {
     private readonly studentRepository: Repository<Student>,
   ) {}
 
-  async getSearchingStudent(
+  async getCountStudent(
+    studentDto: StudentDto,
+    dto: GlobalPaginationDto,
+  ): Promise<globalApiResponseDto> {
+    const { accepted, searching, applied, shortlisted } = studentDto;
+    const { skip, take } = globalPaginationHelper(dto);
+    const whereClause: any = {};
+    if (dto.date) {
+      if (!isValid(new Date(dto.date))) {
+        throw new BadRequestException(
+          'The date is invalid. Please input a valid date (YYYY-MM-DD)',
+        );
+      }
+      whereClause.createdDate = new Date(dto.date);
+    }
+    whereClause.searching = searching;
+
+    const getCounting = await this.studentRepository.count({
+      where: whereClause,
+      relations: {
+        ...(accepted && accepted === true
+          ? {
+              acceptedApplicants: true,
+            }
+          : applied && applied === true
+            ? {
+                appliedStudent: true,
+              }
+            : shortlisted && shortlisted === true
+              ? {
+                  shortlistedApplicants: true,
+                }
+              : undefined),
+      },
+      skip,
+      take,
+    });
+    return {
+      message: 'successful',
+      data: getCounting,
+      statusCode: HttpStatus.OK,
+    };
+  }
+
+  async getStudentData(
     studentDto: StudentDto,
     dto: GlobalPaginationDto,
   ): Promise<globalApiResponseDto> {
@@ -61,7 +105,7 @@ export class StudentsService {
       message: 'successful',
       data: data,
       statusCode: HttpStatus.OK,
-      totalCount: count,
+      totalCount: count
     };
   }
 }

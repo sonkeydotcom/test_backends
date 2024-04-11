@@ -12,13 +12,23 @@ import { StudentDto } from './dto/student.dto';
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
-  @Get('/admin/searching')
+  @Get('/admin/count')
   @UseGuards(AuthGuard(), RoleGuard)
   @Roles(UserRole.ADMIN)
-  getSearchStudent(
+  getStudentCount(
     @Query() dto: GlobalPaginationDto,
     @Query() studentDto: StudentDto,
   ) {
-    return this.studentsService.getSearchingStudent(studentDto, dto);
+    return this.studentsService.getCountStudent(studentDto, dto);
+  }
+
+  @Get('/admin/data')
+  @UseGuards(AuthGuard(), RoleGuard)
+  @Roles(UserRole.ADMIN)
+  getStudentData(
+    @Query() dto: GlobalPaginationDto,
+    @Query() studentDto: StudentDto,
+  ) {
+    return this.studentsService.getStudentData(studentDto, dto);
   }
 }
