@@ -57,4 +57,7 @@ export class Student {
 
   @ManyToOne(() => AcceptedApplicants, (acp) => acp.students)
   acceptedApplicants: AcceptedApplicants;
+
+  @Column({ default: false })
+  searching: boolean;
 }
