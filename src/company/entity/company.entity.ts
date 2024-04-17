@@ -33,8 +33,8 @@ export class Company {
   @Column()
   password: string;
 
-  @Column({ type: 'date' })
-  year_founded: Date;
+  @Column()
+  year_founded: string;
 
   @Index()
   @Column()
@@ -64,6 +64,6 @@ export class Company {
   @UpdateDateColumn()
   updatedDate: Date;
 
-  @Column()
+  @Column({nullable: true})
   totalApplicants: number;
 }

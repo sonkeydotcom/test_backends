@@ -12,4 +12,9 @@ export class AuthController {
   handleLogin(@Body() dto: userLoginDto) {
     return this.authService.loginUser(dto);
   }
+
+  @Post('signup')
+  handleAccountCreation(@Body() dto: userLoginDto) {
+    return this.authService.createUserAccount(dto)
+  }
 }
