@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // should return a user or a company
+  // should return a user or a company or student incase added
   async validate(payload: JWTBody): Promise<User | Company> {
     return this.authService.validateGetUserOnReq(payload);
   }

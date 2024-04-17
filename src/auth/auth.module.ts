@@ -13,9 +13,7 @@ import { Company } from 'src/company/entity/company.entity';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, {
-    provide: APP_GUARD, useClass:  JwtAuthGuard
-  }, JwtStrategy],
+  providers: [AuthService, JwtStrategy],
   imports: [
     TypeOrmModule.forFeature([User, Company]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -23,7 +21,6 @@ import { Company } from 'src/company/entity/company.entity';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        global: false,
         secret: configService.get('JWT_KEY'),
         signOptions: {
           expiresIn: configService.get('JWT_TIME'),
@@ -31,6 +28,6 @@ import { Company } from 'src/company/entity/company.entity';
       }),
     }),
   ],
-  exports: [PassportModule, JwtStrategy, AuthService]
+  exports: [AuthService, PassportModule, JwtStrategy],
 })
 export class AuthModule {}

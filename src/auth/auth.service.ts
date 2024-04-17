@@ -1,4 +1,10 @@
-import { ForbiddenException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,9 +12,10 @@ import { User, UserRole } from './entities/users.entity';
 import { Repository } from 'typeorm';
 import { JWTBody } from './utils/auth.types';
 import { coreErrorHelper } from 'src/core/helpers/error.helper';
-import { compareHash } from 'src/core/helpers/encrypt.helper';
+import { compareHash, encryptString } from 'src/core/helpers/encrypt.helper';
 import { userLoginDto } from './dto/auth.user.dto';
 import { Company } from 'src/company/entity/company.entity';
+import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,25 +31,20 @@ export class AuthService {
           cache: true,
         });
         if (!user) {
-          throw new UnauthorizedException(
-            'not found, not authorized',
-          );
+          throw new UnauthorizedException('not found, not authorized');
         }
         return user;
       } else {
         const company: Company = await this.companyRepository.findOne({
           where: {
-            email
-          }
-        })
+            email,
+          },
+        });
         if (!Company) {
-          throw new UnauthorizedException(
-            'not found, not authorized',
-          );
+          throw new UnauthorizedException('not found, not authorized');
         }
-        return company
+        return company;
       }
-      
     } catch (error) {
       return coreErrorHelper(error);
     }
@@ -53,22 +55,22 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(Company)
-    private companyRepository: Repository<Company>
+    private companyRepository: Repository<Company>,
   ) {}
 
   public generateAuthToken({
     email,
     userId,
-    role
+    role,
   }: {
     email: string;
-      userId: string;
-    role: UserRole
+    userId: string;
+    role: UserRole;
   }): Promise<string> {
     const payload: JWTBody = {
       email: email,
       userId: userId,
-      role: role
+      role: role,
     };
     return this.jwtService.signAsync(payload);
   }
@@ -124,6 +126,29 @@ export class AuthService {
         },
       });
       return getUser;
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async createUserAccount(dto: userLoginDto): Promise<globalApiResponseDto> {
+    try {
+      const { email, password } = dto;
+      const getUser = await this.FindOneUser(email);
+      if (getUser) {
+        throw new ForbiddenException('user with email already exist');
+      }
+
+      const createUser = this.userRepository.create({
+        email,
+        password: await encryptString(password),
+      });
+      await this.userRepository.save(createUser);
+      return {
+        message: 'successful',
+        data: createUser,
+        statusCode: HttpStatus.CREATED,
+      };
     } catch (err) {
       return coreErrorHelper(err);
     }

@@ -13,14 +13,14 @@ import { AuthModule } from 'src/auth/auth.module';
   controllers: [CompanyController],
   providers: [CompanyService],
   imports: [
-    AuthModule,
     TypeOrmModule.forFeature([
       Company,
       Jobs,
       ShortlistedApplicant,
       AcceptedApplicants,
-      Student
+      Student,
     ]),
+    AuthModule,
   ],
 })
 export class CompanyModule {}

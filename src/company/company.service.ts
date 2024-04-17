@@ -57,10 +57,18 @@ export class CompanyService {
         name: dto.company_name,
         year_founded: dto.year_founded,
       });
+      const token = await this.authService.generateAuthToken({
+        email: createCompany.email,
+        userId: createCompany.id,
+        role: createCompany.role,
+      });
       await this.companyRepository.save(createCompany);
       return {
         statusCode: HttpStatus.CREATED,
-        data: createCompany,
+        data: {
+          company: createCompany,
+          accessToken: token,
+        },
         message: 'account created successful',
       };
     } catch (err) {
@@ -108,40 +116,13 @@ export class CompanyService {
       const findCompany = await this.companyRepository.findOne({
         where: {
           id,
-          email: email ? email : undefined,
         },
         cache: true,
-        relations: {
-          jobs: true,
-        },
       });
       return {
         message: 'successful',
         statusCode: HttpStatus.OK,
-        data: {
-          jobs: findCompany.jobs.map((v) => ({
-            id: v.id,
-            totalApplicants: v?.totalApplicants,
-            createdDate: v.createdDate,
-            position: v?.title,
-            acceptedApplicantPerJob: v?.acceptedApplicant,
-            shortListedApplicantPerJob: v.shortListedApplicant,
-            updatedDate: v?.updatedDate,
-            duration: v.duration,
-          })),
-          id: findCompany.id,
-          name: findCompany.name,
-          companyId: findCompany.companyId,
-          email: findCompany.email,
-          yearFounded: findCompany.year_founded,
-          rc_number: findCompany.rc_number,
-          address: findCompany.address,
-          createdDate: findCompany.createdDate,
-          updatedAt: findCompany.updatedDate,
-          totalApplicants: findCompany.totalApplicants,
-          acceptedApplicant: findCompany.acceptedApplicant,
-          shortlistedApplicants: findCompany.shortListedApplicant,
-        },
+        data: findCompany,
       };
     } catch (err) {
       return coreErrorHelper(err);
@@ -152,20 +133,21 @@ export class CompanyService {
     try {
       const getTotal = await this.companyRepository.findOne({
         where: {
-          id: id,
+          id,
+        },
+        relations: {
+          acceptedApplicant: true,
+          shortListedApplicant: true
         },
         cache: true,
-        relations: {
-          jobs: true,
-        },
       });
       return {
         message: 'successful',
         statusCode: HttpStatus.OK,
         data: {
           totalApplicants: getTotal.totalApplicants,
-          acceptedApplicant: getTotal.acceptedApplicant,
-          shortlistedApplicants: getTotal.shortListedApplicant,
+          acceptedApplicant: getTotal.acceptedApplicant.length,
+          shortlistedApplicants: getTotal.shortListedApplicant.length,
         },
       };
     } catch (err) {
@@ -329,7 +311,7 @@ export class CompanyService {
     try {
       const createJob = this.jobRepository.create({
         company: {
-          id: id,
+          id,
         },
         ...dto,
       });

@@ -22,7 +22,8 @@ export class companyDto {
   rc_number: string;
 
   @ApiProperty()
-  year_founded: Date;
+  @IsString()
+  year_founded: string;
 
   @ApiProperty()
   student_capacity: number;
