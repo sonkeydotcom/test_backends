@@ -54,7 +54,7 @@ npm install
 
 - JWT_TIME=2h
 
-- JWT_KEY= generate your own jwt secret key with this command: <node -e "console log(require('crypto').randomBytes(32).toString('hex'))>
+- JWT_KEY= generate your own jwt secret key with this command: <node -e "console.log(require('crypto').randomBytes(32).toString('hex'))>
 
 # development
 $ npm run start:dev
