@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,7 +29,8 @@ async function bootstrap() {
   );
   app.enableVersioning();
   app.use(helmet());
-  const port = process.env.PORT || 4000;
+  const configService = app.get(ConfigService)
+  const port = configService.get('PORT')
   await app.listen(port);
   console.log(`I-Tapp is running on: ${await app.getUrl()}`);
 }
