@@ -12,6 +12,7 @@ import { globalPaginationHelper } from 'src/core/helpers/paginationHelper';
 import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
 import { StudentDto } from './dto/student.dto';
 import { isValid } from 'date-fns';
+import { coreErrorHelper } from 'src/core/helpers/error.helper';
 
 @Injectable()
 export class StudentsService {
@@ -24,88 +25,102 @@ export class StudentsService {
     studentDto: StudentDto,
     dto: GlobalPaginationDto,
   ): Promise<globalApiResponseDto> {
-    const { accepted, searching, applied, shortlisted } = studentDto;
-    const { skip, take } = globalPaginationHelper(dto);
-    const whereClause: any = {};
-    if (dto.date) {
-      if (!isValid(new Date(dto.date))) {
-        throw new BadRequestException(
-          'The date is invalid. Please input a valid date (YYYY-MM-DD)',
-        );
+    try {
+      const { accepted, searching, applied, shortlisted } = studentDto;
+      const { skip, take } = globalPaginationHelper(dto);
+      const whereClause: any = {};
+      if (dto.date) {
+        if (!isValid(new Date(dto.date))) {
+          throw new BadRequestException(
+            'The date is invalid. Please input a valid date (YYYY-MM-DD)',
+          );
+        }
+        whereClause.createdDate = new Date(dto.date);
       }
-      whereClause.createdDate = new Date(dto.date);
-    }
-    whereClause.searching = searching;
+      whereClause.searching = searching;
 
-    const getCounting = await this.studentRepository.count({
-      where: whereClause,
-      relations: {
-        ...(accepted && accepted === true
-          ? {
-              acceptedApplicants: true,
-            }
-          : applied && applied === true
+      const getCounting = await this.studentRepository.count({
+        where: whereClause,
+        relations: {
+          ...(accepted && accepted === true
             ? {
-                appliedStudent: true,
+                acceptedApplicants: true,
               }
-            : shortlisted && shortlisted === true
+            : applied && applied === true
               ? {
-                  shortlistedApplicants: true,
+                  appliedStudent: true,
                 }
-              : undefined),
-      },
-      skip,
-      take,
-    });
-    return {
-      message: 'successful',
-      data: getCounting,
-      statusCode: HttpStatus.OK,
-    };
+              : shortlisted && shortlisted === true
+                ? {
+                    shortlistedApplicants: true,
+                  }
+                : undefined),
+        },
+        skip,
+        take,
+      });
+      return {
+        message: 'successful',
+        data: getCounting,
+        statusCode: HttpStatus.OK,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
   }
 
   async getStudentData(
     studentDto: StudentDto,
     dto: GlobalPaginationDto,
   ): Promise<globalApiResponseDto> {
-    const { accepted, searching, applied, shortlisted } = studentDto;
-    const { skip, take } = globalPaginationHelper(dto);
-    const whereClause: any = {};
-    if (dto.date) {
-      if (!isValid(new Date(dto.date))) {
-        throw new BadRequestException(
-          'The date is invalid. Please input a valid date (YYYY-MM-DD)',
-        );
+    try {
+      const { accepted, searching, applied, shortlisted } = studentDto;
+      const { skip, take } = globalPaginationHelper(dto);
+      const whereClause: any = {};
+      if (dto.date) {
+        if (!isValid(new Date(dto.date))) {
+          throw new BadRequestException(
+            'The date is invalid. Please input a valid date (YYYY-MM-DD)',
+          );
+        }
+        whereClause.createdDate = new Date(dto.date);
       }
-      whereClause.createdDate = new Date(dto.date);
-    }
-    whereClause.searching = searching;
+      whereClause.searching = searching;
 
-    const [data, count] = await this.studentRepository.find({
-      where: whereClause,
-      relations: {
-        ...(accepted && accepted === true
-          ? {
-              acceptedApplicants: true,
-            }
-          : applied && applied === true
+      const [data, count] = await this.studentRepository.find({
+        where: whereClause,
+        relations: {
+          ...(accepted && accepted === true
             ? {
-                appliedStudent: true,
+                acceptedApplicants: true,
               }
-            : shortlisted && shortlisted === true
+            : applied && applied === true
               ? {
-                  shortlistedApplicants: true,
+                  appliedStudent: true,
                 }
-              : undefined),
-      },
-      skip,
-      take,
-    });
-    return {
-      message: 'successful',
-      data: data,
-      statusCode: HttpStatus.OK,
-      totalCount: count
-    };
+              : shortlisted && shortlisted === true
+                ? {
+                    shortlistedApplicants: true,
+                  }
+                : undefined),
+        },
+        skip,
+        take,
+      });
+      return {
+        message: 'successful',
+        data: data,
+        statusCode: HttpStatus.OK,
+        totalCount: count,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
   }
+
+  // outline of the activities for teh student
+  /*
+  -- upload profile picture
+  
+  */
 }

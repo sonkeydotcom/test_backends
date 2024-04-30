@@ -13,6 +13,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { StudentNotification } from 'src/notifications/entity/notification.entity';
 
 @Entity()
 export class Student {
@@ -60,4 +61,7 @@ export class Student {
 
   @Column({ default: false })
   searching: boolean;
+
+  @OneToMany(() => StudentNotification, (notification) => notification.student)
+  notification: StudentNotification[];
 }
