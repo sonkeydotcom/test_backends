@@ -13,9 +13,8 @@ import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
 import { JobSearchDto, StudentDto } from './dto/student.dto';
 import { isValid } from 'date-fns';
 import { coreErrorHelper } from 'src/core/helpers/error.helper';
-import { AcceptedApplicants } from 'src/company/entity/accepted-applicant.entity';
 import { Jobs } from 'src/company/entity/jobs.entity';
-import { take } from 'rxjs';
+
 
 @Injectable()
 export class StudentsService {
