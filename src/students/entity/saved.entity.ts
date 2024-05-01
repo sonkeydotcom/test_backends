@@ -1,9 +1,25 @@
-import { ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Student } from "./student.entity";
+import {
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Student } from './student.entity';
 
-export class SavedApplicants {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+@Entity()
+export class SavedApplications {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    // @ManyToOne(() => Student, (student) => student.sho)
+  @ManyToOne(() => Student, (student) => student.savedApplication, {
+    nullable: true,
+  })
+  student: Student;
+
+  @CreateDateColumn({ type: 'timestamp with time zone' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  updatedDate: Date;
 }

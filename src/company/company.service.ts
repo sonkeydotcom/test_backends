@@ -294,6 +294,7 @@ export class CompanyService {
             })),
           })),
         },
+        totalCount: count
       };
     } catch (err) {
       return coreErrorHelper(err);

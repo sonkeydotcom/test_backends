@@ -6,10 +6,14 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Student } from './entity/student.entity';
 import { Jobs } from 'src/company/entity/jobs.entity';
+import { SavedApplications } from './entity/saved.entity';
 
 @Module({
   controllers: [StudentsController],
   providers: [StudentsService],
-  imports: [AuthModule, TypeOrmModule.forFeature([Student, Jobs])],
+  imports: [
+    AuthModule,
+    TypeOrmModule.forFeature([Student, Jobs, SavedApplications]),
+  ],
 })
 export class StudentsModule {}

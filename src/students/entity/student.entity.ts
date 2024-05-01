@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 import { StudentNotification } from 'src/notifications/entity/notification.entity';
 import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
+import { SavedApplications } from './saved.entity';
 
 @Entity()
 export class Student {
@@ -59,4 +60,7 @@ export class Student {
 
   @OneToMany(() => AppliedStudents, (applied) => applied.student)
   applied: AppliedStudents[];
+
+  @OneToMany(() => SavedApplications, (savedApp) => savedApp.student)
+  savedApplication: SavedApplications[];
 }

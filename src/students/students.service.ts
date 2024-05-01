@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
@@ -54,7 +53,7 @@ export class StudentsService {
               }
             : applied && applied === true
               ? {
-                applied: true
+                  applied: true,
                 }
               : shortlisted && shortlisted === true
                 ? {
@@ -138,13 +137,14 @@ export class StudentsService {
           );
         }
       }
-
       const [data, count] = await this.studentRepository.findAndCount({
+        skip,
+        take,
         where: {
           id: student.id,
         },
         relations: {
-          ...(saved !== true ? { applied: true } :undefined), //TODO: ADD THE CORRECT RELATION
+          ...(saved !== true ? { applied: true } : { savedApplication: true }),
         },
       });
       const getAllCount =
@@ -156,7 +156,7 @@ export class StudentsService {
             })
           : this.studentRepository.count({
               where: {
-                // saved: Not(IsNull()), //TODO: ADD THE CORRECT RELATION
+                savedApplication: Not(IsNull()),
               },
             });
 
@@ -212,12 +212,10 @@ export class StudentsService {
           'the job is not available, if error persist contact support',
         );
       }
-      
     } catch (err) {
       return coreErrorHelper(err);
     }
   }
-  
 
   /*
 
