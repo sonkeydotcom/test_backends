@@ -7,8 +7,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './utils/auth.jwt-strategy';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './decorator/jwt-auth-guard.decorator';
 import { Company } from 'src/company/entity/company.entity';
 import { Student } from 'src/students/entity/student.entity';
 
