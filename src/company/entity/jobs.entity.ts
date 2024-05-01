@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,6 +14,7 @@ import { Student } from 'src/students/entity/student.entity';
 import { AppliedStudents } from './applied-applicants.entity';
 import { AcceptedApplicants } from './accepted-applicant.entity';
 import { ShortlistedApplicant } from './shortlisted-applicant.entity';
+import { SavedApplications } from 'src/students/entity/saved.entity';
 
 @Entity()
 export class Jobs {
@@ -78,4 +80,7 @@ export class Jobs {
 
   @Column({ default: 0 })
   shortListedApplicants: number;
+
+  @OneToOne(() => SavedApplications, (saved) => saved.jobs)
+  savedApplications: SavedApplications;
 }

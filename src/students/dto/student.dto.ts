@@ -25,18 +25,56 @@ class DurationLength {
   end: number;
 }
 export class JobSearchDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
   location: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
   field: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   duration: DurationLength;
 
-  @ApiProperty({ type: 'enum', enum: OrderEnum })
+  @ApiProperty({ type: 'enum', enum: OrderEnum, required: false })
+  @IsOptional()
   @IsEnum(OrderEnum)
   orderBy: OrderEnum;
+}
+
+export class UpdateStudentProfileDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  firstName: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  lastName: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  email: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  phoneNumber: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  bio: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  password: string
+}
+
+export class StudentOnboarding {
+  @ApiProperty()
+  matNo: string;
+
+  @ApiProperty()
+  school: string;
 }

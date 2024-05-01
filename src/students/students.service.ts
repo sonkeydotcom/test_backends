@@ -10,11 +10,18 @@ import { Not, IsNull, Repository, Between, Like } from 'typeorm';
 import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
 import { globalPaginationHelper } from 'src/core/helpers/paginationHelper';
 import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
-import { JobSearchDto, StudentDto } from './dto/student.dto';
+import {
+  JobSearchDto,
+  StudentDto,
+  StudentOnboarding,
+  UpdateStudentProfileDto,
+} from './dto/student.dto';
 import { isValid } from 'date-fns';
 import { coreErrorHelper } from 'src/core/helpers/error.helper';
 import { Jobs } from 'src/company/entity/jobs.entity';
-
+import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
+import { encryptString } from 'src/core/helpers/encrypt.helper';
+import { extname } from 'path';
 
 @Injectable()
 export class StudentsService {
@@ -23,6 +30,8 @@ export class StudentsService {
     private studentRepository: Repository<Student>,
     @InjectRepository(Jobs)
     private jobsRepository: Repository<Jobs>,
+    @InjectRepository(AppliedStudents)
+    private applyJobsRepository: Repository<AppliedStudents>,
   ) {}
 
   async getCountStudent(
@@ -186,7 +195,6 @@ export class StudentsService {
           createdDate: orderBy,
         },
       });
-
       return {
         message: 'successful',
         data: data,
@@ -198,30 +206,111 @@ export class StudentsService {
     }
   }
 
-  async applyForJob(student: Student, jobId: string) {
+  async applyForJob(
+    student: Student,
+    jobId: string,
+  ): Promise<globalApiResponseDto> {
     try {
       const getJob = await this.jobsRepository.findOne({
         where: {
           id: jobId,
         },
       });
-
       if (!getJob) {
         throw new NotFoundException(
           'the job is not available, if error persist contact support',
         );
       }
+      const applyJ = this.applyJobsRepository.create({
+        job: {
+          id: jobId,
+        },
+        student: {
+          id: student.id,
+        },
+      });
+      await this.applyJobsRepository.save(applyJ);
+      return {
+        message: 'job applied successful',
+        statusCode: HttpStatus.CREATED,
+      };
     } catch (err) {
       return coreErrorHelper(err);
     }
   }
 
-  /*
+  async updateStudentProfile(
+    dto: UpdateStudentProfileDto,
+    student: Student,
+    file: Express.Multer.File,
+  ): Promise<globalApiResponseDto> {
+    try {
+      const { bio, email, firstName, lastName, phoneNumber, password } = dto;
 
-  - update student profile
-  -- apply for jobs
-  -- return where student is currently enrolled
-  -- student onboarding
+      const name = file.originalname.split('.')[0];
+      const ext = extname(file.originalname);
+      const fileName = `${student.matriculationNumber}_${name}_${ext}`;
+      const editStudent = await this.studentRepository.update(student.id, {
+        lastName,
+        bio,
+        firstName,
+        phoneNumber,
+        email,
+        imagePath: fileName,
+        password: await encryptString(password),
+      });
 
-  */
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'successful',
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async onboardStudent(dto: StudentOnboarding): Promise<globalApiResponseDto> {
+    try {
+      const findStudent = await this.studentRepository.findOne({
+        where: {
+          matriculationNumber: dto.matNo.toLowerCase(),
+          school: dto.school.toLowerCase(),
+        },
+      });
+      if (!findStudent) {
+        throw new NotFoundException('sorry, you do not exist in the database');
+      }
+      return {
+        message: 'successful',
+        statusCode: HttpStatus.OK,
+        data: findStudent,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async getStudentCurrentIt(student: Student): Promise<globalApiResponseDto> {
+    try {
+      const get = await this.studentRepository.findOne({
+        where: {
+          id: student.id,
+          applied: {
+            accepted: true,
+          },
+        },
+        relations: {
+          applied: true
+        },
+        cache: true,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'successful',
+        data: get,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
 }

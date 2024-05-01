@@ -1,5 +1,6 @@
 import { Student } from 'src/students/entity/student.entity';
 import {
+  Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
@@ -22,4 +23,7 @@ export class AppliedStudents {
 
   @OneToMany(() => Jobs, (jobs) => jobs.appliedStudent)
   job: Jobs;
+
+  @Column()
+  accepted: boolean
 }

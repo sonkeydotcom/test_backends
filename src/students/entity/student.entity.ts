@@ -22,6 +22,30 @@ export class Student {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column()
+  matriculationNumber: string
+  
+  @Column()
+  firstName: string;
+
+  @Column({nullable: true})
+  password: string
+
+  @Column()
+  lastName: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  phoneNumber: string;
+
+  @Column({ type: 'text', nullable: true })
+  bio: string;
+
+  @Column({nullable: true})
+  imagePath: string;
+
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdDate: Date;
 
@@ -43,7 +67,7 @@ export class Student {
   @Column({ default: UserRole.STUDENT })
   role: UserRole;
 
-  @Column()
+  @Column({nullable: true})
   CGPA: string;
 
   @OneToMany(() => ShortlistedApplicant, (sap) => sap.student)
