@@ -3,22 +3,28 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entity/student.entity';
-import { Repository } from 'typeorm';
+import { Not, IsNull, Repository, Between, Like } from 'typeorm';
 import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
 import { globalPaginationHelper } from 'src/core/helpers/paginationHelper';
 import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
-import { StudentDto } from './dto/student.dto';
+import { JobSearchDto, StudentDto } from './dto/student.dto';
 import { isValid } from 'date-fns';
 import { coreErrorHelper } from 'src/core/helpers/error.helper';
+import { AcceptedApplicants } from 'src/company/entity/accepted-applicant.entity';
+import { Jobs } from 'src/company/entity/jobs.entity';
+import { take } from 'rxjs';
 
 @Injectable()
 export class StudentsService {
   constructor(
     @InjectRepository(Student)
-    private readonly studentRepository: Repository<Student>,
+    private studentRepository: Repository<Student>,
+    @InjectRepository(Jobs)
+    private jobsRepository: Repository<Jobs>,
   ) {}
 
   async getCountStudent(
@@ -48,7 +54,7 @@ export class StudentsService {
               }
             : applied && applied === true
               ? {
-                  appliedStudent: true,
+                applied: true
                 }
               : shortlisted && shortlisted === true
                 ? {
@@ -96,7 +102,7 @@ export class StudentsService {
               }
             : applied && applied === true
               ? {
-                  appliedStudent: true,
+                  applied: true,
                 }
               : shortlisted && shortlisted === true
                 ? {
@@ -118,9 +124,107 @@ export class StudentsService {
     }
   }
 
-  // outline of the activities for teh student
-  /*
-  -- upload profile picture
+  async getAllApplicationsByStudent(
+    student: Student,
+    dto: GlobalPaginationDto,
+    saved: boolean,
+  ): Promise<globalApiResponseDto> {
+    try {
+      const { skip, take } = globalPaginationHelper(dto);
+      if (dto.date) {
+        if (!isValid(new Date(dto.date))) {
+          throw new BadRequestException(
+            'The date is invalid. Please input a valid date (YYYY-MM-DD)',
+          );
+        }
+      }
+
+      const [data, count] = await this.studentRepository.findAndCount({
+        where: {
+          id: student.id,
+        },
+        relations: {
+          ...(saved !== true ? { applied: true } :undefined), //TODO: ADD THE CORRECT RELATION
+        },
+      });
+      const getAllCount =
+        saved !== true
+          ? this.studentRepository.count({
+              where: {
+                applied: Not(IsNull()),
+              },
+            })
+          : this.studentRepository.count({
+              where: {
+                // saved: Not(IsNull()), //TODO: ADD THE CORRECT RELATION
+              },
+            });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'successful',
+        data: {
+          student: data,
+          count: count,
+        },
+        totalCount: getAllCount,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async searchForJobs(dto: JobSearchDto): Promise<globalApiResponseDto> {
+    try {
+      const { duration, field, location, orderBy } = dto;
+      const [data, count] = await this.jobsRepository.findAndCount({
+        where: {
+          industry: Like(`%${field}%`),
+          duration: Between(duration.start, duration.end),
+          city: Like(`%${location}%`),
+        },
+        order: {
+          createdDate: orderBy,
+        },
+      });
+
+      return {
+        message: 'successful',
+        data: data,
+        totalCount: count,
+        statusCode: HttpStatus.OK,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async applyForJob(student: Student, jobId: string) {
+    try {
+      const getJob = await this.jobsRepository.findOne({
+        where: {
+          id: jobId,
+        },
+      });
+
+      if (!getJob) {
+        throw new NotFoundException(
+          'the job is not available, if error persist contact support',
+        );
+      }
+      
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
   
+
+  /*
+
+  - update student profile
+  -- apply for jobs
+  -- return where student is currently enrolled
+  -- student onboarding
+
   */
 }

@@ -135,10 +135,6 @@ export class CompanyService {
         where: {
           id,
         },
-        relations: {
-          acceptedApplicant: true,
-          shortListedApplicant: true
-        },
         cache: true,
       });
       return {
@@ -146,8 +142,8 @@ export class CompanyService {
         statusCode: HttpStatus.OK,
         data: {
           totalApplicants: getTotal.totalApplicants,
-          acceptedApplicant: getTotal.acceptedApplicant.length,
-          shortlistedApplicants: getTotal.shortListedApplicant.length,
+          acceptedApplicant: getTotal.acceptedApplicants,
+          shortlistedApplicants: getTotal.shortListedApplicants,
         },
       };
     } catch (err) {
@@ -191,8 +187,8 @@ export class CompanyService {
           createdDate: companies.createdDate,
           updatedAt: companies.updatedDate,
           totalApplicants: companies.totalApplicants,
-          acceptedApplicant: companies.acceptedApplicant,
-          shortlistedApplicants: companies.shortListedApplicant,
+          acceptedApplicant: companies.acceptedApplicants,
+          shortlistedApplicants: companies.shortListedApplicants,
         },
         totalCount: count,
       };
@@ -207,19 +203,16 @@ export class CompanyService {
   ): Promise<globalApiResponseDto> {
     try {
       const { skip, take } = globalPaginationHelper(dto);
-      const [data, count] = await this.acceptedApplicantsRepository.find({
+      const [data, count] = await this.companyRepository.find({
         skip,
         take,
         where: {
-          company: {
             id: companyId,
-          },
         },
         relations: {
-          company: {
-            jobs: true,
-          },
-          students: true,
+          jobs: {
+            acceptedApplicant: true
+          }
         },
       });
       return {
@@ -227,9 +220,9 @@ export class CompanyService {
         statusCode: HttpStatus.OK,
         totalCount: count,
         data: {
-          companyId: data?.company?.id,
-          name: data.company.name,
-          job: data.company.jobs.map((j) => ({
+          companyId: data?.id,
+          name: data?.name,
+          job: data.jobs.map((j) => ({
             id: j.id,
             position: j.title,
             duration: j.duration,
@@ -237,14 +230,16 @@ export class CompanyService {
             endDate: j.endDate,
             createdDate: j.createdDate,
           })),
-          student: data.students.map((v) => ({
-            studentId: v?.id,
-            createdDate: v?.createdDate,
-            course: v?.courseOfStudy,
-            CGPA: v?.CGPA,
-            school: v?.school,
-            department: v?.department,
-            currentLevel: v?.level,
+          acceptedStudents: data.jobs.map((v) => ({
+            student: v?.acceptedApplicant.flatMap((v) => ({
+              studentId: v.students.id,
+              createdDate: v?.students.createdDate,
+              course: v?.students.courseOfStudy,
+              CGPA: v?.students.CGPA,
+              school: v?.students.school,
+              department: v?.students.department,
+              currentLevel: v?.students.level,
+            })),
           })),
         },
       };
@@ -259,28 +254,27 @@ export class CompanyService {
   ): Promise<globalApiResponseDto> {
     try {
       const { skip, take } = globalPaginationHelper(dto);
-      const [data, count] = await this.shortedListedApplicantsRepository.find({
+      const [data, count] = await this.companyRepository.find({
         skip,
         take,
         where: {
-          company: {
             id: id,
-          },
         },
         relations: {
-          company: {
-            jobs: true,
-          },
-          student: true,
+
+          jobs: {
+              shortListedApplicant: true
+            },
+
         },
       });
       return {
         message: 'successful',
         statusCode: HttpStatus.OK,
         data: {
-          companyId: data.company.id,
-          name: data.company.name,
-          job: data.company.jobs.map((j) => ({
+          companyId: data.id,
+          name: data.name,
+          job: data.jobs.map((j) => ({
             id: j.id,
             position: j.title,
             duration: j.duration,
@@ -288,14 +282,16 @@ export class CompanyService {
             endDate: j.endDate,
             createdDate: j.createdDate,
           })),
-          student: data.student.map((v) => ({
-            studentId: v?.id,
-            createdDate: v?.createdDate,
-            course: v?.courseOfStudy,
-            CGPA: v?.CGPA,
-            school: v?.school,
-            department: v?.department,
-            currentLevel: v?.level,
+          student: data.jobs.map((v) => ({
+            student: v?.acceptedApplicant.flatMap((v) => ({
+              studentId: v.students.id,
+              createdDate: v?.students.createdDate,
+              course: v?.students.courseOfStudy,
+              CGPA: v?.students.CGPA,
+              school: v?.students.school,
+              department: v?.students.department,
+              currentLevel: v?.students.level,
+            })),
           })),
         },
       };

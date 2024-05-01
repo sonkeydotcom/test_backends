@@ -8,6 +8,7 @@ import { ShortlistedApplicant } from './entity/shortlisted-applicant.entity';
 import { AcceptedApplicants } from './entity/accepted-applicant.entity';
 import { Student } from 'src/students/entity/student.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { AppliedStudents } from './entity/applied-applicants.entity';
 
 @Module({
   controllers: [CompanyController],
@@ -19,6 +20,7 @@ import { AuthModule } from 'src/auth/auth.module';
       ShortlistedApplicant,
       AcceptedApplicants,
       Student,
+      AppliedStudents,
     ]),
     AuthModule,
   ],

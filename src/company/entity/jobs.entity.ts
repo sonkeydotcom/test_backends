@@ -4,11 +4,15 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Company as Company } from './company.entity';
 import { Student } from 'src/students/entity/student.entity';
+import { AppliedStudents } from './applied-applicants.entity';
+import { AcceptedApplicants } from './accepted-applicant.entity';
+import { ShortlistedApplicant } from './shortlisted-applicant.entity';
 
 @Entity()
 export class Jobs {
@@ -21,14 +25,11 @@ export class Jobs {
   @Column()
   level: string;
 
-  @Column({ default: 0 })
-  totalApplicants: number;
-
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdDate: Date;
 
-  @Column({ default: 0 })
-  shortListedApplicant: number;
+  @OneToMany(() => ShortlistedApplicant, (student) => student.jobs)
+  shortListedApplicant: ShortlistedApplicant[];
 
   @Column()
   startDate: Date;
@@ -39,11 +40,8 @@ export class Jobs {
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedDate: Date;
 
-  @Column({ default: 0 })
-  acceptedApplicant: number;
-
-  @ManyToOne(() => Student, (st) => st.appliedStudent)
-  appliedStudents: Student[];
+  @OneToMany(() => AcceptedApplicants, (ap) => ap.jobs, { nullable: true })
+  acceptedApplicant: AcceptedApplicants[];
 
   @ManyToOne(() => Company, (company) => company.jobs, {
     onDelete: 'CASCADE',
@@ -51,12 +49,8 @@ export class Jobs {
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
-  @Column({ default: 0 })
+  @Column()
   duration: number;
-
-  @ManyToOne(() => Student, (student) => student.jobs)
-  @JoinColumn({ name: 'studentId' })
-  acceptedStudent: Student[];
 
   @Column()
   address: string;
@@ -72,4 +66,16 @@ export class Jobs {
 
   @Column()
   industry: string;
+
+  @OneToMany(() => AppliedStudents, (appliedStudent) => appliedStudent.job)
+  appliedStudent: AppliedStudents[];
+
+  @Column({ default: 0 })
+  totalApplicants: number;
+
+  @Column({ default: 0 })
+  acceptedApplicants: number;
+
+  @Column({ default: 0 })
+  shortListedApplicants: number;
 }
