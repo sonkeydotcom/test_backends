@@ -25,5 +25,5 @@ export class AppliedStudents {
   job: Jobs;
 
   @Column()
-  accepted: boolean
+  accepted: boolean;
 }

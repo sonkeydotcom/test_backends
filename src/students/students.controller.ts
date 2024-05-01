@@ -82,14 +82,16 @@ export class StudentsController {
 
   @Post('/profile')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: 'uploads/student',
-      filename: (req, file, cb) => {
-        cb(null, file.originalname)
-      }
-    })
-  }))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: 'uploads/student',
+        filename: (req, file, cb) => {
+          cb(null, file.originalname);
+        },
+      }),
+    }),
+  )
   updateStudentProfile(
     @UploadedFile(
       new ParseFilePipe({
@@ -115,6 +117,6 @@ export class StudentsController {
 
   @Get('/job/current')
   getCurrentJob(@GetUser() student: Student) {
-    return this.studentsService.getStudentCurrentIt(student)
+    return this.studentsService.getStudentCurrentIt(student);
   }
 }

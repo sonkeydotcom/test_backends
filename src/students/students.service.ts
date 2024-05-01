@@ -300,7 +300,7 @@ export class StudentsService {
           },
         },
         relations: {
-          applied: true
+          applied: true,
         },
         cache: true,
       });

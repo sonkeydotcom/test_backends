@@ -68,7 +68,7 @@ export class UpdateStudentProfileDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  password: string
+  password: string;
 }
 
 export class StudentOnboarding {

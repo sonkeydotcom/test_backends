@@ -14,5 +14,5 @@ export class globalApiResponseDto {
   statusCode: number;
 
   @ApiProperty()
-  totalCount?: any
+  totalCount?: any;
 }

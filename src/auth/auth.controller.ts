@@ -15,6 +15,6 @@ export class AuthController {
 
   @Post('signup')
   handleAccountCreation(@Body() dto: userLoginDto) {
-    return this.authService.createUserAccount(dto)
+    return this.authService.createUserAccount(dto);
   }
 }

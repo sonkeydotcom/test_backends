@@ -23,13 +23,13 @@ export class Student {
   id: string;
 
   @Column()
-  matriculationNumber: string
-  
+  matriculationNumber: string;
+
   @Column()
   firstName: string;
 
-  @Column({nullable: true})
-  password: string
+  @Column({ nullable: true })
+  password: string;
 
   @Column()
   lastName: string;
@@ -43,7 +43,7 @@ export class Student {
   @Column({ type: 'text', nullable: true })
   bio: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   imagePath: string;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
@@ -67,7 +67,7 @@ export class Student {
   @Column({ default: UserRole.STUDENT })
   role: UserRole;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   CGPA: string;
 
   @OneToMany(() => ShortlistedApplicant, (sap) => sap.student)

@@ -22,10 +22,9 @@ export class SavedApplications {
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp with time zone' })
-    updatedDate: Date;
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  updatedDate: Date;
 
-    @OneToOne(() => Jobs, (jobs) => jobs.savedApplications)
-    jobs: Jobs
-    
+  @OneToOne(() => Jobs, (jobs) => jobs.savedApplications)
+  jobs: Jobs;
 }

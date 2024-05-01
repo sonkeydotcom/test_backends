@@ -6,8 +6,6 @@ import { PassportModule } from '@nestjs/passport';
 @Module({
   controllers: [CoreController],
   providers: [CoreService],
-  imports: [
-    PassportModule,
-  ]
+  imports: [PassportModule],
 })
 export class CoreModule {}

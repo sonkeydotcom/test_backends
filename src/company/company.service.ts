@@ -207,12 +207,12 @@ export class CompanyService {
         skip,
         take,
         where: {
-            id: companyId,
+          id: companyId,
         },
         relations: {
           jobs: {
-            acceptedApplicant: true
-          }
+            acceptedApplicant: true,
+          },
         },
       });
       return {
@@ -258,14 +258,12 @@ export class CompanyService {
         skip,
         take,
         where: {
-            id: id,
+          id: id,
         },
         relations: {
-
           jobs: {
-              shortListedApplicant: true
-            },
-
+            shortListedApplicant: true,
+          },
         },
       });
       return {
@@ -294,7 +292,7 @@ export class CompanyService {
             })),
           })),
         },
-        totalCount: count
+        totalCount: count,
       };
     } catch (err) {
       return coreErrorHelper(err);

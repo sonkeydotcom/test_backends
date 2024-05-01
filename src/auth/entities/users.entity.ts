@@ -11,7 +11,7 @@ export enum UserRole {
   STUDENT = 'student',
   COMPANY = 'company',
   ADMIN = 'admin',
-  USER = 'user'
+  USER = 'user',
 }
 @Entity()
 export class User {

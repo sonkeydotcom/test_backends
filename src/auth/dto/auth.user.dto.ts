@@ -12,7 +12,6 @@ export class userLoginDto {
   password: string;
 }
 
-
 // export class signUpDto {
 //   @ApiProperty()
 //   @IsEmail()

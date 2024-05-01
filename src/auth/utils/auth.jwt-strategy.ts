@@ -7,7 +7,6 @@ import { AuthService } from '../auth.service';
 import { User } from '../entities/users.entity';
 import { Company } from 'src/company/entity/company.entity';
 
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(

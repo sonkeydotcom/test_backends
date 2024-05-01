@@ -1,11 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class NotificationDto {
-    @ApiProperty()
-    title: string
+  @ApiProperty()
+  title: string;
 
-    @ApiProperty()
-    body: string
-
-    
+  @ApiProperty()
+  body: string;
 }
