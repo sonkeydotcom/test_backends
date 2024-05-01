@@ -10,12 +10,13 @@ import { JwtStrategy } from './utils/auth.jwt-strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './decorator/jwt-auth-guard.decorator';
 import { Company } from 'src/company/entity/company.entity';
+import { Student } from 'src/students/entity/student.entity';
 
 @Module({
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   imports: [
-    TypeOrmModule.forFeature([User, Company]),
+    TypeOrmModule.forFeature([User, Company, Student]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

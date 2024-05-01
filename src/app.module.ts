@@ -6,6 +6,7 @@ import { CoreModule } from './core/core.module';
 import { CompanyModule } from './company/company.module';
 import { StudentsModule } from './students/students.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     CompanyModule,
     StudentsModule,
     NotificationsModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [],
   providers: [],

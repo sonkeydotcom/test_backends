@@ -15,7 +15,8 @@ import { CreateJobDto } from './dto/jobs.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard, Roles } from 'src/auth/guard/roles.guard';
 import { UserRole } from 'src/auth/entities/users.entity';
-import { Public } from 'src/auth/decorator/is-public.decorator';
+import { GetUser } from 'src/auth/decorator/get-user.decorator';
+import { Company } from './entity/company.entity';
 
 @ApiTags('Company')
 @Controller('company')
@@ -36,14 +37,13 @@ export class CompanyController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @Get('/:id')
-  CompanyById(@Param('id') id: string, @Query() email?: string) {
-    return this.companyService.getById(id, email);
+  CompanyById(@GetUser() company: Company, @Query() email?: string) {
+    return this.companyService.getById(company, email);
   }
 
-  @UseGuards(AuthGuard())
-  @ApiBearerAuth()
   @Get('/admin/all')
-  // @UseGuards(AuthGuard(), RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RoleGuard)
   @Roles(UserRole.ADMIN)
   getAllCompanies(@Query() dto: GlobalPaginationDto) {
     return this.companyService.getAllCompanies(dto);
@@ -51,35 +51,35 @@ export class CompanyController {
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
-  @Get('/applicants/accepted/:companyId')
+  @Get('/applicants/accepted')
   getAllAcceptedApplicants(
-    @Param('companyId') companyId: string,
+    @GetUser() company: Company,
     @Query() dto: GlobalPaginationDto,
   ) {
-    return this.companyService.getAcceptedApplicants(companyId, dto);
+    return this.companyService.getAcceptedApplicants(company, dto);
   }
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
-  @Get('/applicants/shortlisted/:id')
+  @Get('/applicants/shortlisted')
   getShortListedApplicants(
-    @Param('id') id: string,
+    @GetUser() company: Company,
     @Query() dto: GlobalPaginationDto,
   ) {
-    return this.companyService.getShortListedStudent(id, dto);
+    return this.companyService.getShortListedStudent(company, dto);
   }
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
-  @Post('/job/new/:id')
-  createNewJob(@Body() dto: CreateJobDto, @Param('id') id: string) {
-    return this.companyService.createdNewJob(id, dto);
+  @Post('/job/new')
+  createNewJob(@Body() dto: CreateJobDto, @GetUser() company: Company) {
+    return this.companyService.createdNewJob(company, dto);
   }
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
-  @Get('/category/:id')
-  applicantsByCategory(@Param('id') id: string) {
-    return this.companyService.getApplicantsByCategory(id);
+  @Get('/category')
+  applicantsByCategory(@GetUser() company: Company) {
+    return this.companyService.getApplicantsByCategory(company);
   }
 }

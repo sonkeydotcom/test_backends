@@ -6,7 +6,6 @@ import {
   MaxFileSizeValidator,
   ParseFilePipe,
   Post,
-  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -14,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from 'src/auth/entities/users.entity';
 import { RoleGuard, Roles } from 'src/auth/guard/roles.guard';
@@ -35,6 +34,7 @@ export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Get('/admin/count')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard(), RoleGuard)
   @Roles(UserRole.ADMIN)
   getStudentCount(
@@ -44,13 +44,15 @@ export class StudentsController {
     return this.studentsService.getCountStudent(studentDto, dto);
   }
 
-  @Post('/job/apply')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard())
+  @Post('/job/apply')
   applyJob(@GetUser() student: Student, @Body() id: string) {
     return this.studentsService.applyForJob(student, id);
   }
 
   @Get('/admin/data')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard(), RoleGuard)
   @Roles(UserRole.ADMIN)
   getStudentData(
@@ -61,6 +63,7 @@ export class StudentsController {
   }
 
   @Get('/applications')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard())
   getStudentApplication(
     @Query() dto: GlobalPaginationDto,
@@ -75,12 +78,15 @@ export class StudentsController {
   }
 
   @Get('/search/jobs')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard())
   searchForItJobs(@Query() dto: JobSearchDto) {
     return this.studentsService.searchForJobs(dto);
   }
 
   @Post('/profile')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -111,11 +117,15 @@ export class StudentsController {
   }
 
   @Get('/onboard')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   onboardStudent(@Query() dto: StudentOnboarding) {
     return this.studentsService.onboardStudent(dto);
   }
 
   @Get('/job/current')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   getCurrentJob(@GetUser() student: Student) {
     return this.studentsService.getStudentCurrentIt(student);
   }
