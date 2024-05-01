@@ -16,6 +16,7 @@ import { compareHash, encryptString } from 'src/core/helpers/encrypt.helper';
 import { userLoginDto } from './dto/auth.user.dto';
 import { Company } from 'src/company/entity/company.entity';
 import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
+import { Student } from 'src/students/entity/student.entity';
 
 @Injectable()
 export class AuthService {
@@ -56,6 +57,8 @@ export class AuthService {
     private userRepository: Repository<User>,
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
+    @InjectRepository(Student)
+    private studentRepository: Repository<Student>,
   ) {}
 
   public generateAuthToken({
@@ -85,10 +88,38 @@ export class AuthService {
     }
   }
 
-  async loginUser(dto: userLoginDto) {
+  async loginUser(dto: userLoginDto, student: boolean) {
     try {
       const { email, password } = dto;
 
+      if (student) {
+        const findStudent = await this.studentRepository.findOne({
+          where: {
+            email: email.toLowerCase(),
+          },
+        });
+        if (!findStudent) {
+          throw new ForbiddenException('student email not found or does not exist')
+        }
+        const checkPassword = await compareHash(password, findStudent?.password);
+        if (!checkPassword) {
+          throw new ForbiddenException('the password or email is incorrect');
+        }
+        const token = await this.generateAuthToken({
+          email: findStudent?.email,
+          userId: findStudent?.id,
+          role: findStudent.role,
+        });
+        // send notification maybe if needed
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'login successful',
+          data: {
+            accessToken: token,
+            user: findStudent,
+          },
+        };
+      }
       const getUser = await this.FindOneUser(email);
       if (!getUser) {
         throw new NotFoundException(

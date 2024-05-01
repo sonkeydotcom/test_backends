@@ -46,11 +46,14 @@ export class NotificationsService {
     }
   }
 
-  async getNotificationById(id: string): Promise<globalApiResponseDto> {
+  async getNotificationById(id: string, student: Student): Promise<globalApiResponseDto> {
     try {
       const getSingleNotification = await this.notificationRepository.findOne({
         where: {
           id,
+          student: {
+            id: student.id
+          }
         },
         relations: {
           student: true,
@@ -124,5 +127,13 @@ export class NotificationsService {
     } catch (err) {
       return coreErrorHelper(err);
     }
+  }
+
+  async runHealthCheck(): Promise<globalApiResponseDto> {
+    console.log('=========================== Health Check ============================')
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'successful and alive',
+    };
   }
 }

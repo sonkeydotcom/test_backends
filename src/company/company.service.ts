@@ -111,11 +111,15 @@ export class CompanyService {
     }
   }
 
-  async getById(id: string, email?: string): Promise<globalApiResponseDto> {
+  async getById(
+    company: Company,
+    email?: string,
+  ): Promise<globalApiResponseDto> {
     try {
       const findCompany = await this.companyRepository.findOne({
         where: {
-          id,
+          id: company.id,
+          email,
         },
         cache: true,
       });
@@ -129,11 +133,13 @@ export class CompanyService {
     }
   }
 
-  async getApplicantsByCategory(id: string): Promise<globalApiResponseDto> {
+  async getApplicantsByCategory(
+    company: Company,
+  ): Promise<globalApiResponseDto> {
     try {
       const getTotal = await this.companyRepository.findOne({
         where: {
-          id,
+          id: company.id,
         },
         cache: true,
       });
@@ -198,7 +204,7 @@ export class CompanyService {
   }
 
   async getAcceptedApplicants(
-    companyId: string,
+    company: Company,
     dto: GlobalPaginationDto,
   ): Promise<globalApiResponseDto> {
     try {
@@ -207,7 +213,7 @@ export class CompanyService {
         skip,
         take,
         where: {
-          id: companyId,
+          id: company.id,
         },
         relations: {
           jobs: {
@@ -249,7 +255,7 @@ export class CompanyService {
   }
 
   async getShortListedStudent(
-    id: string,
+    company: Company,
     dto: GlobalPaginationDto,
   ): Promise<globalApiResponseDto> {
     try {
@@ -258,7 +264,7 @@ export class CompanyService {
         skip,
         take,
         where: {
-          id: id,
+          id: company.id,
         },
         relations: {
           jobs: {
@@ -300,13 +306,13 @@ export class CompanyService {
   }
 
   async createdNewJob(
-    id: string,
+    company: Company,
     dto: CreateJobDto,
   ): Promise<globalApiResponseDto> {
     try {
       const createJob = this.jobRepository.create({
         company: {
-          id,
+          id: company.id,
         },
         ...dto,
       });
