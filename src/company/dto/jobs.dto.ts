@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateJobDto {
   @ApiProperty()
@@ -26,8 +26,8 @@ export class CreateJobDto {
   state: string;
 
   @ApiProperty()
-    description: string;
-    
-    @ApiProperty()
-    industry: string
+  description: string;
+
+  @ApiProperty()
+  industry: string;
 }

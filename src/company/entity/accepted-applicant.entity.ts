@@ -3,12 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Company } from './company.entity';
 import { Student } from 'src/students/entity/student.entity';
+import { Jobs } from './jobs.entity';
 
 @Entity()
 export class AcceptedApplicants {
@@ -16,17 +16,16 @@ export class AcceptedApplicants {
   id: string;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  createdAt: Date;
+  createdDate: Date;
 
-  @ManyToOne(() => Company, (company) => company.acceptedApplicant)
-  @JoinColumn({ name: 'companyId' })
-  company: Company;
+  @ManyToOne(() => Jobs, (jap) => jap.acceptedApplicant)
+  jobs: Jobs;
 
-  @OneToMany(() => Student, (student) => student.acceptedApplicants, {
+  @ManyToOne(() => Student, (student) => student.acceptedApplicants, {
     nullable: true,
   })
   @JoinColumn({ name: 'studentId' })
-  students: Student[];
+  students: Student;
 
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedDate: Date;

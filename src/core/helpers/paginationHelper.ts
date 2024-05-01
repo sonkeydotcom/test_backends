@@ -1,4 +1,4 @@
-import { GlobalPaginationDto } from "../dto/pagination.dto";
+import { GlobalPaginationDto } from '../dto/pagination.dto';
 
 export const globalPaginationHelper = (
   dto: GlobalPaginationDto,

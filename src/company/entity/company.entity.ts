@@ -52,18 +52,15 @@ export class Company {
   @OneToMany(() => Jobs, (jobs) => jobs.company)
   jobs: Jobs[];
 
-  @OneToMany(() => ShortlistedApplicant, (sap) => sap.company)
-  shortListedApplicant: ShortlistedApplicant[];
-
-  @ManyToOne(() => Student, (stu) => stu.saved)
-  savedStudent: Student[];
-
-  @OneToMany(() => AcceptedApplicants, (ap) => ap.company)
-  acceptedApplicant: AcceptedApplicants[];
-
   @UpdateDateColumn()
   updatedDate: Date;
 
-  @Column({nullable: true})
+  @Column({ default: 0, nullable: true })
   totalApplicants: number;
+
+  @Column({ default: 0, nullable: true })
+  acceptedApplicants: number;
+
+  @Column({ default: 0, nullable: true })
+  shortListedApplicants: number;
 }

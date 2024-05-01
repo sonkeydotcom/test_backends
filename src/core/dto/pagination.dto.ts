@@ -27,7 +27,7 @@ export class GlobalPaginationDto {
   @IsOptional()
   order?: 'ASC' | 'DESC';
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   @IsOptional()
   date: string;
 }

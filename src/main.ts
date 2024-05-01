@@ -29,8 +29,8 @@ async function bootstrap() {
   );
   app.enableVersioning();
   app.use(helmet());
-  const configService = app.get(ConfigService)
-  const port = configService.get('PORT')
+  const configService = app.get(ConfigService);
+  const port = configService.get('PORT');
   await app.listen(port);
   console.log(`I-Tapp is running on: ${await app.getUrl()}`);
 }

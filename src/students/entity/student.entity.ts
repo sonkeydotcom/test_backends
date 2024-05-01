@@ -13,11 +13,38 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { StudentNotification } from 'src/notifications/entity/notification.entity';
+import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
+import { SavedApplications } from './saved.entity';
 
 @Entity()
 export class Student {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  matriculationNumber: string;
+
+  @Column()
+  firstName: string;
+
+  @Column({ nullable: true })
+  password: string;
+
+  @Column()
+  lastName: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  phoneNumber: string;
+
+  @Column({ type: 'text', nullable: true })
+  bio: string;
+
+  @Column({ nullable: true })
+  imagePath: string;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdDate: Date;
@@ -25,17 +52,8 @@ export class Student {
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedDate: Date;
 
-  @OneToMany(() => Jobs, (jobs) => jobs.acceptedStudent)
-  jobs: Jobs;
-
   @Column()
   school: string;
-
-  @OneToMany(() => Jobs, (ap) => ap.appliedStudents)
-  appliedStudent: Jobs[];
-
-  @OneToMany(() => Company, (saved) => saved.savedStudent)
-  saved: Company;
 
   @Column()
   department: string;
@@ -49,15 +67,24 @@ export class Student {
   @Column({ default: UserRole.STUDENT })
   role: UserRole;
 
-  @Column()
+  @Column({ nullable: true })
   CGPA: string;
 
-  @ManyToOne(() => ShortlistedApplicant, (sap) => sap.student)
-  shortlistedApplicants: ShortlistedApplicant;
+  @OneToMany(() => ShortlistedApplicant, (sap) => sap.student)
+  shortlistedApplicants: ShortlistedApplicant[];
 
-  @ManyToOne(() => AcceptedApplicants, (acp) => acp.students)
-  acceptedApplicants: AcceptedApplicants;
+  @OneToMany(() => AcceptedApplicants, (acp) => acp.students)
+  acceptedApplicants: AcceptedApplicants[];
 
   @Column({ default: false })
   searching: boolean;
+
+  @OneToMany(() => StudentNotification, (notification) => notification.student)
+  notification: StudentNotification[];
+
+  @OneToMany(() => AppliedStudents, (applied) => applied.student)
+  applied: AppliedStudents[];
+
+  @OneToMany(() => SavedApplications, (savedApp) => savedApp.student)
+  savedApplication: SavedApplications[];
 }
