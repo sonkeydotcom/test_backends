@@ -37,8 +37,15 @@ export class CompanyController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @Get('/:id')
-  CompanyById(@GetUser() company: Company, @Query() email?: string) {
-    return this.companyService.getById(company, email);
+  CompanyById(@Param('id') id: string) {
+    return this.companyService.getById(id);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  @Get('/profile')
+  getCompanyProfile(@GetUser() company: Company) {
+    return this.companyService.getCompanyProfile(company);
   }
 
   @Get('/admin/all')
