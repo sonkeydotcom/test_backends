@@ -9,6 +9,7 @@ import { AcceptedApplicants } from './entity/accepted-applicant.entity';
 import { Student } from 'src/students/entity/student.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { AppliedStudents } from './entity/applied-applicants.entity';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   controllers: [CompanyController],
@@ -23,6 +24,7 @@ import { AppliedStudents } from './entity/applied-applicants.entity';
       AppliedStudents,
     ]),
     AuthModule,
+    PassportModule
   ],
 })
 export class CompanyModule {}

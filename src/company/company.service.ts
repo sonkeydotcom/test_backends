@@ -21,6 +21,26 @@ import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class CompanyService {
+  async getCompanyProfile(company: Company) {
+    try {
+      const findCompany = await this.companyRepository.findOne({
+        where: {
+          id: company.id,
+        },
+        cache: true,
+      });
+      if (!findCompany) {
+        throw new NotFoundException('the company data does not exist');
+      }
+      return {
+        message: 'successful',
+        statusCode: HttpStatus.OK,
+        data: findCompany,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
   constructor(
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
@@ -112,17 +132,18 @@ export class CompanyService {
   }
 
   async getById(
-    company: Company,
-    email?: string,
+    id: string
   ): Promise<globalApiResponseDto> {
     try {
       const findCompany = await this.companyRepository.findOne({
         where: {
-          id: company.id,
-          email,
+          id,
         },
         cache: true,
       });
+      if (!findCompany) {
+        throw new NotFoundException('the company data does not exist')
+      }
       return {
         message: 'successful',
         statusCode: HttpStatus.OK,
