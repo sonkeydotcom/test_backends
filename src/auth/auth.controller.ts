@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { userLoginDto } from './dto/auth.user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { getAuthUserResponseDto, userLoginDto } from './dto/auth.user.dto';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   GetCompany,
   GetStudent,
@@ -10,6 +10,7 @@ import {
 import { User } from './entities/users.entity';
 import { Company } from 'src/company/entity/company.entity';
 import { Student } from 'src/students/entity/student.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -26,7 +27,13 @@ export class AuthController {
     return this.authService.createUserAccount(dto);
   }
 
-  @Get('current-user')
+  @ApiResponse({
+    description: 'returns the current auth user',
+    type: getAuthUserResponseDto,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  @Get('/me')
   getCurrentAuthUser(
     @GetUser() user: User,
     @GetCompany() company: Company,
