@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Company as Company } from './company.entity';
-import { Student } from 'src/students/entity/student.entity';
+// import { Student } from 'src/students/entity/student.entity';
 import { AppliedStudents } from './applied-applicants.entity';
 import { AcceptedApplicants } from './accepted-applicant.entity';
 import { ShortlistedApplicant } from './shortlisted-applicant.entity';

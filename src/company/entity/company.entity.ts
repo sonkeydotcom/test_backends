@@ -4,16 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Jobs } from './jobs.entity';
-import { Student } from 'src/students/entity/student.entity';
-import { AcceptedApplicants } from './accepted-applicant.entity';
-import { ShortlistedApplicant } from './shortlisted-applicant.entity';
 
 @Entity()
 export class Company {

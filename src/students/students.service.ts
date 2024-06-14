@@ -250,14 +250,14 @@ export class StudentsService {
       const name = file.originalname.split('.')[0];
       const ext = extname(file.originalname);
       const fileName = `${student.matriculationNumber}_${name}_${ext}`;
-      const editStudent = await this.studentRepository.update(student.id, {
-        lastName,
-        bio,
-        firstName,
-        phoneNumber,
-        email,
-        imagePath: fileName,
-        password: await encryptString(password),
+      await this.studentRepository.update(student.id, {
+        lastName: lastName ?? undefined,
+        bio: bio ?? undefined,
+        firstName: firstName ?? undefined,
+        phoneNumber: phoneNumber ?? undefined,
+        email: email ?? undefined,
+        imagePath: fileName ?? undefined,
+        password: password ? await encryptString(password) : undefined,
       });
 
       return {

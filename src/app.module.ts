@@ -41,7 +41,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     CompanyModule,
     StudentsModule,
     NotificationsModule,
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
   ],
   controllers: [],
   providers: [],
