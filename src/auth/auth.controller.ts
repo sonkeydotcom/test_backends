@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { userLoginDto } from './dto/auth.user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { getAuthUserResponseDto, userLoginDto } from './dto/auth.user.dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   GetCompany,
   GetStudent,
@@ -26,7 +26,11 @@ export class AuthController {
     return this.authService.createUserAccount(dto);
   }
 
-  @Get('current-user')
+  @ApiResponse({
+    description: 'returns the current auth user',
+    type: getAuthUserResponseDto,
+  })
+  @Get('/me')
   getCurrentAuthUser(
     @GetUser() user: User,
     @GetCompany() company: Company,
