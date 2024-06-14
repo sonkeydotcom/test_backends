@@ -3,12 +3,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Company } from './company.entity';
+// import { Company } from './company.entity';
 import { Student } from 'src/students/entity/student.entity';
 import { Jobs } from './jobs.entity';
 

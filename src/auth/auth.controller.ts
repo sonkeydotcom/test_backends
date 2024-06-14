@@ -1,7 +1,15 @@
-import { Body, Controller, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { userLoginDto } from './dto/auth.user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import {
+  GetCompany,
+  GetStudent,
+  GetUser,
+} from './decorator/get-user.decorator';
+import { User } from './entities/users.entity';
+import { Company } from 'src/company/entity/company.entity';
+import { Student } from 'src/students/entity/student.entity';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -16,5 +24,14 @@ export class AuthController {
   @Post('signup')
   handleAccountCreation(@Body() dto: userLoginDto) {
     return this.authService.createUserAccount(dto);
+  }
+
+  @Get('current-user')
+  getCurrentAuthUser(
+    @GetUser() user: User,
+    @GetCompany() company: Company,
+    @GetStudent() student: Student,
+  ) {
+    return this.authService.getCurrentAuthUser(user, company, student);
   }
 }

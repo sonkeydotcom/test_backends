@@ -6,6 +6,7 @@ import { JWTBody } from './auth.types';
 import { AuthService } from '../auth.service';
 import { User } from '../entities/users.entity';
 import { Company } from 'src/company/entity/company.entity';
+import { Student } from 'src/students/entity/student.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -21,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   // should return a user or a company or student incase added
-  async validate(payload: JWTBody): Promise<User | Company> {
+  async validate(payload: JWTBody): Promise<User | Company | Student> {
     return this.authService.validateGetUserOnReq(payload);
   }
 }

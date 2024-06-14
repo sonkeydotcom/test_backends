@@ -45,7 +45,7 @@ export class companyLoginDto {
   password: string;
 
   @ApiProperty({ required: false })
-    @IsOptional()
+  @IsOptional()
   @IsString()
   rc_number?: string;
 }

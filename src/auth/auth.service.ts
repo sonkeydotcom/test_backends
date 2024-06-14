@@ -13,14 +13,16 @@ import { Repository } from 'typeorm';
 import { JWTBody } from './utils/auth.types';
 import { coreErrorHelper } from 'src/core/helpers/error.helper';
 import { compareHash, encryptString } from 'src/core/helpers/encrypt.helper';
-import { userLoginDto } from './dto/auth.user.dto';
+import { getAuthUserResponseDto, userLoginDto } from './dto/auth.user.dto';
 import { Company } from 'src/company/entity/company.entity';
 import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
 import { Student } from 'src/students/entity/student.entity';
 
 @Injectable()
 export class AuthService {
-  async validateGetUserOnReq(payload: JWTBody): Promise<User | Company> {
+  async validateGetUserOnReq(
+    payload: JWTBody,
+  ): Promise<User | Company | Student> {
     try {
       // TODO! check for the student too, to validate their request
       const { email, role } = payload;
@@ -35,7 +37,7 @@ export class AuthService {
           throw new UnauthorizedException('not found, not authorized');
         }
         return user;
-      } else {
+      } else if (role === UserRole.COMPANY) {
         const company: Company = await this.companyRepository.findOne({
           where: {
             email,
@@ -45,6 +47,16 @@ export class AuthService {
           throw new UnauthorizedException('not found, not authorized');
         }
         return company;
+      } else {
+        const student: Student = await this.studentRepository.findOne({
+          where: {
+            email,
+          },
+        });
+        if (!student) {
+          throw new UnauthorizedException('not found, not authorized');
+        }
+        return student;
       }
     } catch (error) {
       return coreErrorHelper(error);
@@ -99,9 +111,14 @@ export class AuthService {
           },
         });
         if (!findStudent) {
-          throw new ForbiddenException('student email not found or does not exist')
+          throw new ForbiddenException(
+            'student email not found or does not exist',
+          );
         }
-        const checkPassword = await compareHash(password, findStudent?.password);
+        const checkPassword = await compareHash(
+          password,
+          findStudent?.password,
+        );
         if (!checkPassword) {
           throw new ForbiddenException('the password or email is incorrect');
         }
@@ -179,6 +196,33 @@ export class AuthService {
         message: 'successful',
         data: createUser,
         statusCode: HttpStatus.CREATED,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async getCurrentAuthUser(
+    user?: User,
+    company?: Company,
+    student?: Student,
+  ): Promise<getAuthUserResponseDto> {
+    try {
+      return {
+        message: 'getting current auth user successful',
+        statusCode: HttpStatus.OK,
+        data: {
+          id: user?.userId ?? company?.id ?? student?.id,
+          email: user?.email ?? company?.email ?? student?.email,
+          name:
+            company?.name ??
+            `${student?.firstName} ${student?.firstName}` ??
+            null,
+          matriculationNumber: student?.matriculationNumber ?? null,
+          phoneNumber: student?.phoneNumber ?? null,
+          role: student?.role ?? company?.role ?? user?.role,
+          companyId: company?.id ?? null,
+        },
       };
     } catch (err) {
       return coreErrorHelper(err);

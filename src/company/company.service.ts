@@ -98,7 +98,7 @@ export class CompanyService {
 
   async login(dto: companyLoginDto): Promise<globalApiResponseDto> {
     try {
-      const { email, password, rc_number } = dto;
+      const { email, password } = dto;
       const findCompany = await this.companyRepository.findOne({
         where: {
           email,
@@ -131,9 +131,7 @@ export class CompanyService {
     }
   }
 
-  async getById(
-    id: string
-  ): Promise<globalApiResponseDto> {
+  async getById(id: string): Promise<globalApiResponseDto> {
     try {
       const findCompany = await this.companyRepository.findOne({
         where: {
@@ -142,7 +140,7 @@ export class CompanyService {
         cache: true,
       });
       if (!findCompany) {
-        throw new NotFoundException('the company data does not exist')
+        throw new NotFoundException('the company data does not exist');
       }
       return {
         message: 'successful',

@@ -24,7 +24,7 @@ import { PassportModule } from '@nestjs/passport';
       AppliedStudents,
     ]),
     AuthModule,
-    PassportModule
+    PassportModule,
   ],
 })
 export class CompanyModule {}
