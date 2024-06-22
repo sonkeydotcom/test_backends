@@ -131,14 +131,4 @@ export class NotificationsService {
       return coreErrorHelper(err);
     }
   }
-
-  async runHealthCheck(): Promise<globalApiResponseDto> {
-    console.log(
-      '=========================== Health Check ============================',
-    );
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'successful and alive',
-    };
-  }
 }

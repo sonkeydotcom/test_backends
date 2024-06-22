@@ -17,6 +17,11 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Get('/health')
+  cronHealthCheck() {
+    return this.authService.runHealthCheck();
+  }
+
   @Post('/login')
   handleLogin(@Body() dto: userLoginDto, @Body() student: boolean) {
     return this.authService.loginUser(dto, student);
