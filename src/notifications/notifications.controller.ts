@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Cron, CronExpression } from '@nestjs/schedule';
+// import { Cron, CronExpression } from '@nestjs/schedule';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { Student } from 'src/students/entity/student.entity';
 import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
@@ -33,9 +33,5 @@ export class NotificationsController {
     return this.notificationsService.getNotificationCount(student);
   }
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
-  @Get('health')
-  cronHealthCheck() {
-    return this.notificationsService.runHealthCheck();
-  }
+  // @Cron(CronExpression.EVERY_30_SECONDS)
 }
