@@ -129,4 +129,15 @@ export class StudentsController {
   getCurrentJob(@GetUser() student: Student) {
     return this.studentsService.getStudentCurrentIt(student);
   }
+
+  @Post('/check')
+  checkMatriculation(@Body('matriculation') matriculation: string) {
+    // Calls the service method and passes the matriculation data
+    return this.studentsService.checkMatriculation(matriculation);
+  }
+
+  @Get('/check')
+  checkMatric() {
+    return 'Hello wold';
+  }
 }

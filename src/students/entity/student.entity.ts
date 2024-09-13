@@ -35,7 +35,7 @@ export class Student {
   @Column()
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   phoneNumber: string;
 
   @Column({ type: 'text', nullable: true })
@@ -53,13 +53,13 @@ export class Student {
   @Column()
   school: string;
 
-  @Column()
+  @Column({ nullable: true })
   department: string;
 
-  @Column()
+  @Column({ nullable: true })
   courseOfStudy: string;
 
-  @Column()
+  @Column({ nullable: true })
   level: string;
 
   @Column({ default: UserRole.STUDENT })

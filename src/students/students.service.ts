@@ -22,6 +22,7 @@ import { Jobs } from 'src/company/entity/jobs.entity';
 import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
 import { encryptString } from 'src/core/helpers/encrypt.helper';
 import { extname } from 'path';
+import { data } from 'src/dummy';
 
 @Injectable()
 export class StudentsService {
@@ -287,6 +288,33 @@ export class StudentsService {
       };
     } catch (err) {
       return coreErrorHelper(err);
+    }
+  }
+
+  async checkMatriculation(
+    matriculation: string,
+  ): Promise<{ message: string; data?: any }> {
+    try {
+      // Find the student with the matching matriculation number
+      const student = data.find(
+        (student) =>
+          student.matriculation.toUpperCase() === matriculation.toUpperCase(),
+      );
+
+      if (!student) {
+        // If no student is found, return a "not found" message
+        throw new NotFoundException(
+          `Student with the provided ${matriculation} number was not found`,
+        );
+      }
+
+      // If a student is found, return their details along with the message
+      return {
+        message: 'found',
+        data: student,
+      };
+    } catch (error) {
+      return coreErrorHelper(error);
     }
   }
 

@@ -1,6 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  isEmail,
+} from 'class-validator';
 import { OrderEnum } from 'src/core/dto/pagination.dto';
+
+export class CreateStudentDto {
+  @ApiProperty()
+  @IsString()
+  firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  lastName: string;
+
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  password: string;
+
+  @ApiProperty()
+  @IsString()
+  matriculationNumber: string;
+
+  @ApiProperty()
+  @IsString()
+  school: string;
+}
 
 export class StudentDto {
   @ApiProperty({ required: false })

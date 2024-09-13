@@ -17,6 +17,7 @@ import { getAuthUserResponseDto, userLoginDto } from './dto/auth.user.dto';
 import { Company } from 'src/company/entity/company.entity';
 import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
 import { Student } from 'src/students/entity/student.entity';
+import { CreateStudentDto } from 'src/students/dto/student.dto';
 
 @Injectable()
 export class AuthService {
@@ -176,6 +177,46 @@ export class AuthService {
       return getUser;
     } catch (err) {
       return coreErrorHelper(err);
+    }
+  }
+
+  async createStudentAccount(
+    dto: CreateStudentDto,
+  ): Promise<globalApiResponseDto> {
+    try {
+      const {
+        email,
+        password,
+        firstName,
+        lastName,
+        matriculationNumber,
+        school,
+      } = dto;
+      const findStudent = await this.studentRepository.findOne({
+        where: {
+          email: email.toLowerCase(),
+        },
+      });
+      if (findStudent) {
+        throw new ForbiddenException('student email already exist');
+      }
+
+      const createStudent = this.studentRepository.create({
+        email,
+        firstName,
+        lastName,
+        matriculationNumber,
+        school,
+        password: await encryptString(password),
+      });
+      await this.studentRepository.save(createStudent);
+      return {
+        message: 'successful',
+        data: createStudent,
+        statusCode: HttpStatus.CREATED,
+      };
+    } catch (error) {
+      return coreErrorHelper(error);
     }
   }
 

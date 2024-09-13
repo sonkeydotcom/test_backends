@@ -11,6 +11,7 @@ import { User } from './entities/users.entity';
 import { Company } from 'src/company/entity/company.entity';
 import { Student } from 'src/students/entity/student.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { CreateStudentDto } from 'src/students/dto/student.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -25,6 +26,11 @@ export class AuthController {
   @Post('/login')
   handleLogin(@Body() dto: userLoginDto, @Body() student: boolean) {
     return this.authService.loginUser(dto, student);
+  }
+
+  @Post('/student/signup')
+  handleStudentSignup(@Body() dto: CreateStudentDto) {
+    return this.authService.createStudentAccount(dto);
   }
 
   @Post('signup')
