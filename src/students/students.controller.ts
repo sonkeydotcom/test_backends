@@ -47,7 +47,8 @@ export class StudentsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @Post('/job/apply')
-  applyJob(@GetUser() student: Student, @Body() id: string) {
+  applyJob(@GetUser() student: Student, @Body() body: { id: string }) {
+    const { id } = body; // Extract the `id` field from the body object
     return this.studentsService.applyForJob(student, id);
   }
 
