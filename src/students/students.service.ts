@@ -23,12 +23,15 @@ import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
 import { encryptString } from 'src/core/helpers/encrypt.helper';
 import { extname } from 'path';
 import { data } from 'src/dummy';
+import { company } from './entity/company.entity';
 
 @Injectable()
 export class StudentsService {
   constructor(
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
+    @InjectRepository(Company)
+    private companyRepository: Repository<Company>,
     @InjectRepository(Jobs)
     private jobsRepository: Repository<Jobs>,
     @InjectRepository(AppliedStudents)
@@ -213,6 +216,19 @@ export class StudentsService {
       return {
         message: 'all jobs fetched successfully',
         data: jobs,
+        statusCode: HttpStatus.OK,
+      };
+    } catch (error) {
+      return coreErrorHelper(error);
+    }
+  }
+
+  async getAllCompanies() {
+    try {
+      const companies = await this.companyRepository.findAndCount();
+      return {
+        message: 'all jobs fetched successfully',
+        data: companies,
         statusCode: HttpStatus.OK,
       };
     } catch (error) {

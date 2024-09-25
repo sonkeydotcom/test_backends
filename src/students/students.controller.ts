@@ -91,6 +91,13 @@ export class StudentsController {
     return this.studentsService.getAllJobs();
   }
 
+  @Get('/companies')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  getAllCompanies() {
+    return this.studentsService.getAllCompanies();
+  }
+
   @Post('/profile')
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
