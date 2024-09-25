@@ -207,6 +207,19 @@ export class StudentsService {
     }
   }
 
+  async getAllJobs() {
+    try {
+      const jobs = await this.jobsRepository.find();
+      return {
+        message: 'all jobs fetched successfully',
+        data: jobs,
+        statusCode: HttpStatus.OK,
+      };
+    } catch (error) {
+      return coreErrorHelper(error);
+    }
+  }
+
   async applyForJob(
     student: Student,
     jobId: string,

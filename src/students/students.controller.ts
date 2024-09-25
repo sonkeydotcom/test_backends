@@ -84,6 +84,13 @@ export class StudentsController {
     return this.studentsService.searchForJobs(dto);
   }
 
+  @Get('/jobs')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  getAllJobs() {
+    return this.studentsService.getAllJobs();
+  }
+
   @Post('/profile')
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
