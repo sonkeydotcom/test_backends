@@ -23,7 +23,7 @@ import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
 import { encryptString } from 'src/core/helpers/encrypt.helper';
 import { extname } from 'path';
 import { data } from 'src/dummy';
-import { company } from './entity/company.entity';
+import { Company } from '../company/entity/company.entity';
 
 @Injectable()
 export class StudentsService {
