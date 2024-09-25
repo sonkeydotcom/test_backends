@@ -6,6 +6,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Student } from './entity/student.entity';
 import { Jobs } from 'src/company/entity/jobs.entity';
+import { Company } from 'src/company/entity/company.entity';
 import { SavedApplications } from './entity/saved.entity';
 import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
 
@@ -19,6 +20,7 @@ import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
       Jobs,
       SavedApplications,
       AppliedStudents,
+      Company,
     ]),
   ],
 })
