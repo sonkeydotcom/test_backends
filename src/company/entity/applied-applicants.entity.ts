@@ -24,6 +24,9 @@ export class AppliedStudents {
   @OneToMany(() => Jobs, (jobs) => jobs.appliedStudent)
   job: Jobs;
 
-  @Column()
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
   accepted: boolean;
 }
