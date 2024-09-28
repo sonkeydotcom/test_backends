@@ -8,11 +8,11 @@ export enum OrderEnum {
 
 export class GlobalPaginationDto {
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   pageNumber: number;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   limit: number;
 
   @ApiProperty({ required: false })
