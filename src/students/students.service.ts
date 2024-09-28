@@ -142,35 +142,19 @@ export class StudentsService {
   ): Promise<globalApiResponseDto> {
     try {
       // const { skip, take } = globalPaginationHelper(dto);
-      if (dto.date) {
-        if (!isValid(new Date(dto.date))) {
-          throw new BadRequestException(
-            'The date is invalid. Please input a valid date (YYYY-MM-DD)',
-          );
-        }
-      }
-      const [data, count] = await this.studentRepository.findAndCount({
-        // skip,
-        // take,
+
+      const [data, count] = await this.applyJobsRepository.findAndCount({
         where: {
-          id: student.id,
+          student: {
+            id: student.id,
+          },
         },
         relations: {
-          ...(saved !== true ? { applied: true } : { savedApplication: true }),
+          job: {
+            company: true,
+          },
         },
       });
-      const getAllCount =
-        saved !== true
-          ? this.studentRepository.count({
-              where: {
-                applied: Not(IsNull()),
-              },
-            })
-          : this.studentRepository.count({
-              where: {
-                savedApplication: Not(IsNull()),
-              },
-            });
 
       return {
         statusCode: HttpStatus.OK,
@@ -179,7 +163,6 @@ export class StudentsService {
           student: data,
           count: count,
         },
-        totalCount: getAllCount,
       };
     } catch (err) {
       return coreErrorHelper(err);
@@ -212,7 +195,11 @@ export class StudentsService {
 
   async getAllJobs() {
     try {
-      const jobs = await this.jobsRepository.find();
+      const jobs = await this.jobsRepository.find({
+        relations: {
+          company: true,
+        },
+      });
       return {
         message: 'all jobs fetched successfully',
         data: jobs,

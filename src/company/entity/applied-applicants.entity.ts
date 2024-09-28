@@ -21,8 +21,11 @@ export class AppliedStudents {
   @ManyToOne(() => Student, (student) => student.applied)
   student: Student;
 
-  @OneToMany(() => Jobs, (jobs) => jobs.appliedStudent)
-  job: Jobs;
+  // @OneToMany(() => Jobs, (jobs) => jobs.appliedStudent)
+  // job: Jobs;
+
+  @ManyToOne(() => Jobs, (job) => job.appliedStudent)
+  job: Jobs; // Change this to ManyToOne to properly reflect the relationship
 
   @Column({
     type: 'boolean',
