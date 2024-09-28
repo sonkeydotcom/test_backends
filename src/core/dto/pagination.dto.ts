@@ -7,13 +7,13 @@ export enum OrderEnum {
 }
 
 export class GlobalPaginationDto {
-  @ApiProperty()
+  @ApiProperty({ default: 1 })
   @IsOptional()
-  pageNumber: number;
+  pageNumber: number = 1;
 
-  @ApiProperty()
+  @ApiProperty({ default: 10 })
   @IsOptional()
-  limit: number;
+  limit: number = 10;
 
   @ApiProperty({ required: false })
   @IsOptional()
