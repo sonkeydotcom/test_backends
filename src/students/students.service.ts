@@ -141,7 +141,7 @@ export class StudentsService {
     saved: boolean,
   ): Promise<globalApiResponseDto> {
     try {
-      const { skip, take } = globalPaginationHelper(dto);
+      // const { skip, take } = globalPaginationHelper(dto);
       if (dto.date) {
         if (!isValid(new Date(dto.date))) {
           throw new BadRequestException(
@@ -150,8 +150,8 @@ export class StudentsService {
         }
       }
       const [data, count] = await this.studentRepository.findAndCount({
-        skip,
-        take,
+        // skip,
+        // take,
         where: {
           id: student.id,
         },
