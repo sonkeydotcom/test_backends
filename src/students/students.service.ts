@@ -156,11 +156,21 @@ export class StudentsService {
         },
       });
 
+      const mappedData = data.map((application) => ({
+        id: application.id,
+        status: application.accepted,
+        createdAt: application.createdAt,
+        companyName: application.job?.company?.name || 'N/A',
+        location: `${application.job?.address || 'N/A'}, ${application.job?.city || 'N/A'}, ${application.job?.state || 'N/A'}`,
+        numberOfApplicants: application.job?.totalApplicants || 0,
+        industry: application.job?.industry || 'N/A',
+      }));
+
       return {
         statusCode: HttpStatus.OK,
         message: 'successful',
         data: {
-          student: data,
+          student: mappedData,
           count: count,
         },
       };
