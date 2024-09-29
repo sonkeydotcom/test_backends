@@ -92,6 +92,25 @@ export class StudentsController {
     return this.studentsService.getAllJobs();
   }
 
+  @Post('/saved/applications')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  saveApplication(@GetUser() student: Student, @Body() body: { id: string }) {
+    const { id } = body; // Extract the `id` field from the body object
+    return this.studentsService.saveApplication(student, id);
+  }
+
+  @Get('/saved/applications')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  getSavedApplications(
+    @Query() dto: GlobalPaginationDto,
+    @GetUser() student: Student,
+    @Query() saved: boolean,
+  ) {
+    return this.studentsService.getAllSavedJobs(student, dto, saved);
+  }
+
   @Get('/companies')
   @ApiBearerAuth()
   @UseGuards(AuthGuard())

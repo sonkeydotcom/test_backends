@@ -24,6 +24,7 @@ import { encryptString } from 'src/core/helpers/encrypt.helper';
 import { extname } from 'path';
 import { data } from 'src/dummy';
 import { Company } from '../company/entity/company.entity';
+import { SavedApplications } from './entity/saved.entity';
 
 @Injectable()
 export class StudentsService {
@@ -36,6 +37,8 @@ export class StudentsService {
     private jobsRepository: Repository<Jobs>,
     @InjectRepository(AppliedStudents)
     private applyJobsRepository: Repository<AppliedStudents>,
+    @InjectRepository(SavedApplications)
+    private savedApplicationsRepository: Repository<SavedApplications>,
   ) {}
 
   async getCountStudent(
@@ -176,6 +179,97 @@ export class StudentsService {
       };
     } catch (err) {
       return coreErrorHelper(err);
+    }
+  }
+
+  async saveApplication(
+    student: Student,
+    jobId: string,
+  ): Promise<globalApiResponseDto> {
+    try {
+      // Check if the job exists
+      const job = await this.jobsRepository.findOne({
+        where: {
+          id: jobId,
+        },
+      });
+
+      if (!job) {
+        throw new NotFoundException(
+          'The job is not available. If the error persists, contact support.',
+        );
+      }
+
+      // Check if the student has already applied for this job
+      // Check if the student has already saved this job
+      const existing = await this.savedApplicationsRepository.findOne({
+        where: {
+          student: {
+            id: student.id,
+          },
+          jobs: {
+            id: jobId,
+          },
+        },
+        relations: ['jobs', 'student'], // Explicitly load relationships
+      });
+
+      if (existing) {
+        return {
+          message: 'You have already saved this job.',
+          statusCode: HttpStatus.CONFLICT,
+        };
+      }
+
+      // If no existing application, create a new one
+      const saveApplication = this.savedApplicationsRepository.create({
+        jobs: {
+          id: jobId,
+        },
+        student: {
+          id: student.id,
+        },
+      });
+
+      await this.applyJobsRepository.save(saveApplication);
+
+      return {
+        message: 'Job applied successfully',
+        statusCode: HttpStatus.CREATED,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
+  async getAllSavedJobs(
+    student: Student,
+    dto: GlobalPaginationDto,
+    saved: boolean,
+  ): Promise<globalApiResponseDto> {
+    try {
+      // const { skip, take } = globalPaginationHelper(dto);
+      const savedApplications = await this.savedApplicationsRepository.find({
+        where: {
+          student: {
+            id: student.id,
+          },
+        },
+        relations: {
+          jobs: {
+            company: true,
+          },
+        },
+        // skip,
+        // take,
+      });
+      return {
+        message: 'all saved jobs fetched successfully',
+        data: savedApplications,
+        statusCode: HttpStatus.OK,
+      };
+    } catch (error) {
+      return coreErrorHelper(error);
     }
   }
 

@@ -5,6 +5,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { Student } from './student.entity';
 import { Jobs } from 'src/company/entity/jobs.entity';
@@ -26,5 +27,6 @@ export class SavedApplications {
   updatedDate: Date;
 
   @OneToOne(() => Jobs, (jobs) => jobs.savedApplications)
+  @JoinColumn() // Th
   jobs: Jobs;
 }
