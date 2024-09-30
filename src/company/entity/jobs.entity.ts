@@ -81,9 +81,9 @@ export class Jobs {
   @Column({ default: 0 })
   shortListedApplicants: number;
 
-  @OneToOne(
+  @OneToMany(
     () => SavedApplications,
-    (savedApplications) => savedApplications.jobs,
+    (savedApplication) => savedApplication.job,
   )
-  savedApplications: SavedApplications;
+  savedApplications: SavedApplications[];
 }

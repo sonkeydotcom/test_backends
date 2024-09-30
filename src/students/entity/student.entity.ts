@@ -83,6 +83,9 @@ export class Student {
   @OneToMany(() => AppliedStudents, (applied) => applied.student)
   applied: AppliedStudents[];
 
-  @OneToMany(() => SavedApplications, (savedApp) => savedApp.student)
-  savedApplication: SavedApplications[];
+  @OneToMany(
+    () => SavedApplications,
+    (savedApplication) => savedApplication.student,
+  )
+  saved: SavedApplications[];
 }

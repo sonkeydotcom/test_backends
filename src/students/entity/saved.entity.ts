@@ -15,7 +15,7 @@ export class SavedApplications {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Student, (student) => student.savedApplication, {
+  @ManyToOne(() => Student, (student) => student.saved, {
     nullable: true,
   })
   student: Student;
@@ -26,7 +26,10 @@ export class SavedApplications {
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedDate: Date;
 
-  @OneToOne(() => Jobs, (jobs) => jobs.savedApplications)
-  @JoinColumn() // Th
-  jobs: Jobs;
+  @ManyToOne(() => Jobs, (job) => job.savedApplications, {
+    nullable: false,
+    onDelete: 'CASCADE', // Optional: Define behavior on deletion
+  })
+  @JoinColumn({ name: 'jobId' })
+  job: Jobs;
 }

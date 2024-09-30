@@ -200,18 +200,16 @@ export class StudentsService {
         );
       }
 
-      // Check if the student has already applied for this job
       // Check if the student has already saved this job
       const existing = await this.savedApplicationsRepository.findOne({
         where: {
+          job: {
+            id: jobId,
+          },
           student: {
             id: student.id,
           },
-          jobs: {
-            id: jobId,
-          },
         },
-        relations: ['jobs', 'student'], // Explicitly load relationships
       });
 
       if (existing) {
@@ -221,9 +219,8 @@ export class StudentsService {
         };
       }
 
-      // If no existing application, create a new one
       const saveApplication = this.savedApplicationsRepository.create({
-        jobs: {
+        job: {
           id: jobId,
         },
         student: {
@@ -231,10 +228,10 @@ export class StudentsService {
         },
       });
 
-      await this.applyJobsRepository.save(saveApplication);
+      await this.savedApplicationsRepository.save(saveApplication);
 
       return {
-        message: 'Job applied successfully',
+        message: 'Job saved successfully',
         statusCode: HttpStatus.CREATED,
       };
     } catch (err) {
@@ -256,16 +253,27 @@ export class StudentsService {
           },
         },
         relations: {
-          jobs: {
+          job: {
             company: true,
           },
         },
         // skip,
         // take,
       });
+
+      const mappedData = savedApplications.map((application) => ({
+        id: application.id,
+        // status: application?.accepted,
+        createdAt: application.createdAt,
+        companyName: application.job?.company?.name || 'N/A',
+        location: `${application.job?.address || 'N/A'}, ${application.job?.city || 'N/A'}, ${application.job?.state || 'N/A'}`,
+        numberOfApplicants: application.job?.totalApplicants || 0,
+        industry: application.job?.industry || 'N/A',
+      }));
+
       return {
         message: 'all saved jobs fetched successfully',
-        data: savedApplications,
+        data: mappedData,
         statusCode: HttpStatus.OK,
       };
     } catch (error) {
@@ -342,6 +350,25 @@ export class StudentsService {
           'the job is not available, if error persist contact support',
         );
       }
+
+      const existing = await this.applyJobsRepository.findOne({
+        where: {
+          job: {
+            id: jobId,
+          },
+          student: {
+            id: student.id,
+          },
+        },
+      });
+
+      if (existing) {
+        return {
+          message: 'You have already applied to this job.',
+          statusCode: HttpStatus.CONFLICT,
+        };
+      }
+
       const applyJ = this.applyJobsRepository.create({
         job: {
           id: jobId,
