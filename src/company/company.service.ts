@@ -16,6 +16,7 @@ import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
 import { globalPaginationHelper } from 'src/core/helpers/paginationHelper';
 import { CreateJobDto } from './dto/jobs.dto';
 import { AcceptedApplicants } from './entity/accepted-applicant.entity';
+import { AppliedStudents } from './entity/applied-applicants.entity';
 import { ShortlistedApplicant } from './entity/shortlisted-applicant.entity';
 import { AuthService } from 'src/auth/auth.service';
 
@@ -50,6 +51,8 @@ export class CompanyService {
     private acceptedApplicantsRepository: Repository<AcceptedApplicants>,
     @InjectRepository(ShortlistedApplicant)
     private shortedListedApplicantsRepository: Repository<ShortlistedApplicant>,
+    @InjectRepository(AppliedStudents)
+    private applyJobsRepository: Repository<AppliedStudents>,
     private authService: AuthService,
   ) {}
 
@@ -156,19 +159,54 @@ export class CompanyService {
     company: Company,
   ): Promise<globalApiResponseDto> {
     try {
-      const getTotal = await this.companyRepository.findOne({
+      const totalApplicants = await this.applyJobsRepository.findAndCount({
         where: {
-          id: company.id,
+          job: {
+            company: {
+              id: company.id,
+            },
+          },
         },
-        cache: true,
+        relations: {
+          student: true,
+        },
       });
+
+      const acceptedApplicants =
+        await this.acceptedApplicantsRepository.findAndCount({
+          where: {
+            jobs: {
+              company: {
+                id: company.id,
+              },
+            },
+          },
+          relations: {
+            students: true,
+          },
+        });
+
+      const shortListedApplicants =
+        await this.shortedListedApplicantsRepository.findAndCount({
+          where: {
+            jobs: {
+              company: {
+                id: company.id,
+              },
+            },
+          },
+          relations: {
+            student: true,
+          },
+        });
+
       return {
         message: 'successful',
         statusCode: HttpStatus.OK,
         data: {
-          totalApplicants: getTotal.totalApplicants,
-          acceptedApplicant: getTotal.acceptedApplicants,
-          shortlistedApplicants: getTotal.shortListedApplicants,
+          totalApplicants,
+          acceptedApplicants,
+          shortListedApplicants,
         },
       };
     } catch (err) {

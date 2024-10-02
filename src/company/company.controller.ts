@@ -18,7 +18,7 @@ import { UserRole } from 'src/auth/entities/users.entity';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { Company } from './entity/company.entity';
 
-@ApiTags('Company') 
+@ApiTags('Company')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
@@ -85,7 +85,7 @@ export class CompanyController {
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
-  @Get('/category')
+  @Get('/all/category')
   applicantsByCategory(@GetUser() company: Company) {
     return this.companyService.getApplicantsByCategory(company);
   }
