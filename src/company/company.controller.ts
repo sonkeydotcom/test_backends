@@ -89,4 +89,44 @@ export class CompanyController {
   applicantsByCategory(@GetUser() company: Company) {
     return this.companyService.getApplicantsByCategory(company);
   }
+
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+  @Post('/applicants/accept/:studentId')
+  acceptStudent(
+    @Param('studentId') studentId: string,
+    @GetUser() company: Company,
+  ) {
+    return this.companyService.acceptStudent(company, studentId);
+  }
+
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+  @Post('/applicants/shortlist/:studentId')
+  shortlistStudent(
+    @Param('studentId') studentId: string,
+    @GetUser() company: Company,
+  ) {
+    return this.companyService.shortlistStudent(company, studentId);
+  }
+
+  // @UseGuards(AuthGuard())
+  // @ApiBearerAuth()
+  // @Post('/applicants/save/:studentId')
+  // saveStudent(
+  //   @Param('studentId') studentId: string,
+  //   @GetUser() company: Company,
+  // ) {
+  //   return this.companyService.saveStudent(company, studentId);
+  // }
+
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+  @Post('/applicants/decline/:studentId')
+  declineStudent(
+    @Param('studentId') studentId: string,
+    @GetUser() company: Company,
+  ) {
+    return this.companyService.declineStudent(company, studentId);
+  }
 }

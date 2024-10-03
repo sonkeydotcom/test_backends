@@ -383,4 +383,280 @@ export class CompanyService {
       return coreErrorHelper(err);
     }
   }
+
+  // Accept student
+
+  async acceptStudent(
+    company: Company,
+    studentId: string,
+  ): Promise<globalApiResponseDto> {
+    try {
+      // Find the applied student by ID
+      const appliedStudent = await this.applyJobsRepository.findOne({
+        where: {
+          id: studentId,
+          job: {
+            company: {
+              id: company.id,
+            },
+          },
+        },
+        relations: ['student', 'job'],
+      });
+
+      if (!appliedStudent) {
+        throw new NotFoundException(
+          'Applied student not found for this company.',
+        );
+      }
+
+      // Check if the student is already accepted
+      const existingAccepted = await this.acceptedApplicantsRepository.findOne({
+        where: {
+          students: {
+            id: studentId,
+          },
+          jobs: {
+            id: appliedStudent.job.id,
+          },
+        },
+      });
+
+      if (existingAccepted) {
+        throw new ForbiddenException(
+          'Student has already been accepted for this job.',
+        );
+      }
+
+      // Create a new accepted applicant entry
+      const acceptedApplicant = this.acceptedApplicantsRepository.create({
+        students: {
+          id: studentId,
+        },
+        jobs: {
+          id: appliedStudent.job.id,
+        },
+      });
+
+      // Save the accepted applicant
+      await this.acceptedApplicantsRepository.save(acceptedApplicant);
+
+      // Optionally, remove the student from applied applicants or update status
+      // await this.applyJobsRepository.delete(appliedStudent.id);
+
+      return {
+        message: 'Student accepted successfully.',
+        statusCode: HttpStatus.OK,
+        data: acceptedApplicant,
+      };
+    } catch (error) {
+      return coreErrorHelper(error);
+    }
+  }
+
+  // Shortlist student
+
+  async shortlistStudent(
+    company: Company,
+    studentId: string,
+  ): Promise<globalApiResponseDto> {
+    try {
+      // Find the applied student by ID
+      const appliedStudent = await this.applyJobsRepository.findOne({
+        where: {
+          id: studentId,
+          job: {
+            company: {
+              id: company.id,
+            },
+          },
+        },
+        relations: ['student', 'job'],
+      });
+
+      if (!appliedStudent) {
+        throw new NotFoundException(
+          'Applied student not found for this company.',
+        );
+      }
+
+      // Check if the student is already shortlisted
+      const existingShortlisted =
+        await this.shortedListedApplicantsRepository.findOne({
+          where: {
+            student: {
+              id: studentId,
+            },
+            jobs: {
+              id: appliedStudent.job.id,
+            },
+          },
+        });
+
+      if (existingShortlisted) {
+        throw new ForbiddenException(
+          'Student has already been shortlisted for this job.',
+        );
+      }
+
+      // Create a new shortlisted applicant entry
+      const shortlistedApplicant =
+        this.shortedListedApplicantsRepository.create({
+          student: {
+            id: studentId,
+          },
+          jobs: {
+            id: appliedStudent.job.id,
+          },
+        });
+
+      // Save the shortlisted applicant
+      await this.shortedListedApplicantsRepository.save(shortlistedApplicant);
+
+      // Optionally, remove the student from applied applicants or update status
+      // await this.applyJobsRepository.delete(appliedStudent.id);
+
+      return {
+        message: 'Student shortlisted successfully.',
+        statusCode: HttpStatus.OK,
+        data: shortlistedApplicant,
+      };
+    } catch (error) {
+      return coreErrorHelper(error);
+    }
+  }
+
+  // Save student
+
+  // async saveStudent(
+  //   company: Company,
+  //   studentId: string,
+  // ): Promise<globalApiResponseDto> {
+  //   try {
+  //     // Check if the student exists
+  //     const student = await this.applyJobsRepository.findOne({
+  //       where: {
+  //         id: studentId,
+  //         job: {
+  //           company: {
+  //             id: company.id,
+  //           },
+  //         },
+  //       },
+  //       relations: ['student', 'job'],
+  //     });
+
+  //     if (!student) {
+  //       throw new NotFoundException(
+  //         'Applied student not found for this company.',
+  //       );
+  //     }
+
+  //     // Check if already saved
+  //     const alreadySaved = await this.savedApplicantRepository.findOne({
+  //       where: {
+  //         company: {
+  //           id: company.id,
+  //         },
+  //         student: {
+  //           id: studentId,
+  //         },
+  //       },
+  //     });
+
+  //     if (alreadySaved) {
+  //       throw new ForbiddenException('Student is already saved.');
+  //     }
+
+  //     // Create a new saved applicant entry
+  //     const savedApplicant = this.savedApplicantRepository.create({
+  //       company: {
+  //         id: company.id,
+  //       },
+  //       student: {
+  //         id: studentId,
+  //       },
+  //     });
+
+  //     // Save the entry
+  //     await this.savedApplicantRepository.save(savedApplicant);
+
+  //     return {
+  //       message: 'Student saved successfully.',
+  //       statusCode: HttpStatus.OK,
+  //       data: savedApplicant,
+  //     };
+  //   } catch (error) {
+  //     return coreErrorHelper(error);
+  //   }
+  // }
+
+  // Decline student ?
+
+  async declineStudent(
+    company: Company,
+    studentId: string,
+  ): Promise<globalApiResponseDto> {
+    try {
+      // Find the applied student by ID
+      const appliedStudent = await this.applyJobsRepository.findOne({
+        where: {
+          id: studentId,
+          job: {
+            company: {
+              id: company.id,
+            },
+          },
+        },
+        relations: ['student', 'job'],
+      });
+
+      if (!appliedStudent) {
+        throw new NotFoundException(
+          'Applied student not found for this company.',
+        );
+      }
+
+      // Optionally, check if the student has already been accepted or shortlisted
+      const isAccepted = await this.acceptedApplicantsRepository.findOne({
+        where: {
+          students: {
+            id: studentId,
+          },
+          jobs: {
+            id: appliedStudent.job.id,
+          },
+        },
+      });
+
+      const isShortlisted =
+        await this.shortedListedApplicantsRepository.findOne({
+          where: {
+            student: {
+              id: studentId,
+            },
+            jobs: {
+              id: appliedStudent.job.id,
+            },
+          },
+        });
+
+      if (isAccepted || isShortlisted) {
+        throw new ForbiddenException(
+          'Cannot decline a student who has been accepted or shortlisted.',
+        );
+      }
+
+      // Delete the applied student entry
+      await this.applyJobsRepository.delete(appliedStudent.id);
+
+      return {
+        message: 'Student declined successfully.',
+        statusCode: HttpStatus.OK,
+        data: null,
+      };
+    } catch (error) {
+      return coreErrorHelper(error);
+    }
+  }
 }
