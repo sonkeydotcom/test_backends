@@ -92,11 +92,12 @@ export class CompanyController {
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
-  @Post('/applicants/accept/:studentId')
+  @Post('/applicants/accept/')
   acceptStudent(
-    @Param('studentId') studentId: string,
     @GetUser() company: Company,
+    @Body() body: { studentId: string },
   ) {
+    const { studentId } = body; // Extract the `id` field from the body object
     return this.companyService.acceptStudent(company, studentId);
   }
 
