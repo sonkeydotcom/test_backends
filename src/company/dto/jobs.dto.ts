@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateJobDto {
   @ApiProperty()
-  position: string;
+  title: string;
 
   @ApiProperty()
   level: string;

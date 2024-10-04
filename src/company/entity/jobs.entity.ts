@@ -33,12 +33,6 @@ export class Jobs {
   @OneToMany(() => ShortlistedApplicant, (student) => student.jobs)
   shortListedApplicant: ShortlistedApplicant[];
 
-  @Column()
-  startDate: Date;
-
-  @Column()
-  endDate: Date;
-
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedDate: Date;
 
