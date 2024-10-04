@@ -289,8 +289,8 @@ export class CompanyService {
             id: j.id,
             position: j.title,
             duration: j.duration,
-            startDate: j.startDate,
-            endDate: j.endDate,
+            // startDate: j.startDate,
+            // endDate: j.endDate,
             createdDate: j.createdDate,
           })),
           acceptedStudents: data.jobs.map((v) => ({
@@ -339,8 +339,8 @@ export class CompanyService {
             id: j.id,
             position: j.title,
             duration: j.duration,
-            startDate: j.startDate,
-            endDate: j.endDate,
+            // startDate: j.startDate,
+            // endDate: j.endDate,
             createdDate: j.createdDate,
           })),
           student: data.jobs.map((v) => ({
