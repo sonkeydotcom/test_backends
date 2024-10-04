@@ -8,12 +8,6 @@ export class CreateJobDto {
   level: string;
 
   @ApiProperty()
-  startDate: Date;
-
-  @ApiProperty()
-  endDate: Date;
-
-  @ApiProperty()
   duration: number;
 
   @ApiProperty()

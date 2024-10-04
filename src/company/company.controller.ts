@@ -105,9 +105,10 @@ export class CompanyController {
   @ApiBearerAuth()
   @Post('/applicants/shortlist/:studentId')
   shortlistStudent(
-    @Param('studentId') studentId: string,
     @GetUser() company: Company,
+    @Body() body: { studentId: string },
   ) {
+    const { studentId } = body; // Extract the `id` field from the body object
     return this.companyService.shortlistStudent(company, studentId);
   }
 
@@ -125,9 +126,10 @@ export class CompanyController {
   @ApiBearerAuth()
   @Post('/applicants/decline/:studentId')
   declineStudent(
-    @Param('studentId') studentId: string,
     @GetUser() company: Company,
+    @Body() body: { studentId: string },
   ) {
+    const { studentId } = body; // Extract the `id` field from the body object
     return this.companyService.declineStudent(company, studentId);
   }
 }
