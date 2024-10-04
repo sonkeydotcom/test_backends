@@ -43,6 +43,13 @@ export class CompanyController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
+  @Get('/jobs/all')
+  CompanyBy(@GetUser() company: Company) {
+    return this.companyService.getBy(company);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
   @Get('/profile')
   getCompanyProfile(@GetUser() company: Company) {
     return this.companyService.getCompanyProfile(company);

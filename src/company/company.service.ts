@@ -155,6 +155,29 @@ export class CompanyService {
     }
   }
 
+  async getBy(company: Company): Promise<globalApiResponseDto> {
+    try {
+      const findJobs = await this.jobRepository.find({
+        where: {
+          company: {
+            id: company.id,
+          },
+        },
+        cache: true,
+      });
+      if (!findJobs) {
+        throw new NotFoundException('the company data does not exist');
+      }
+      return {
+        message: 'successful',
+        statusCode: HttpStatus.OK,
+        data: findJobs,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
   async getApplicantsByCategory(
     company: Company,
   ): Promise<globalApiResponseDto> {
