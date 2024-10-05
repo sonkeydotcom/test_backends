@@ -7,7 +7,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entity/company.entity';
 import { Repository } from 'typeorm';
-import { companyDto, companyLoginDto } from './dto/company.dto';
+import {
+  companyDto,
+  companyLoginDto,
+  UpdateCompanyProfileDto,
+} from './dto/company.dto';
 import { coreErrorHelper } from 'src/core/helpers/error.helper';
 import { compareHash, encryptString } from 'src/core/helpers/encrypt.helper';
 import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
@@ -19,6 +23,8 @@ import { AcceptedApplicants } from './entity/accepted-applicant.entity';
 import { AppliedStudents } from './entity/applied-applicants.entity';
 import { ShortlistedApplicant } from './entity/shortlisted-applicant.entity';
 import { AuthService } from 'src/auth/auth.service';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { extname } from 'path';
 
 @Injectable()
 export class CompanyService {
@@ -54,6 +60,7 @@ export class CompanyService {
     @InjectRepository(AppliedStudents)
     private applyJobsRepository: Repository<AppliedStudents>,
     private authService: AuthService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async createCompanyAccount(dto: companyDto) {
@@ -680,6 +687,58 @@ export class CompanyService {
       };
     } catch (error) {
       return coreErrorHelper(error);
+    }
+  }
+
+  async updateCompanyProfile(
+    dto: UpdateCompanyProfileDto,
+    company: Company,
+    files: Express.Multer.File[],
+  ): Promise<globalApiResponseDto> {
+    try {
+      const { phone, website, address } = dto;
+
+      let profileImageUrl: string | undefined;
+      let backgroundImageUrl: string | undefined;
+
+      for (const file of files) {
+        if (!file) continue;
+
+        const ext = extname(file.originalname).toLowerCase();
+
+        switch (file.fieldname) {
+          case 'profileImage':
+            const profileUpload = await this.cloudinaryService.uploadFile(
+              file,
+              'profile_images',
+            );
+            profileImageUrl = profileUpload.secure_url;
+            break;
+
+          case 'backgroundImage':
+            const backgroundUpload = await this.cloudinaryService.uploadFile(
+              file,
+              'background_images',
+            );
+            backgroundImageUrl = backgroundUpload.secure_url;
+            break;
+        }
+      }
+
+      await this.companyRepository.update(company.id, {
+        phone: phone ?? undefined,
+        website: website ?? undefined,
+        address: address ?? undefined,
+        profileImageUrl: profileImageUrl ?? undefined,
+        backgroundImageUrl: backgroundImageUrl ?? undefined,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'successful',
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
     }
   }
 }

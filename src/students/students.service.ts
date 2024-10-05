@@ -398,7 +398,6 @@ export class StudentsService {
       const { bio, email, firstName, lastName, phoneNumber, password } = dto;
 
       let profileImageUrl: string | undefined;
-      let backgroundImageUrl: string | undefined;
       let documentUrls: string | undefined;
 
       for (const file of files) {
@@ -413,14 +412,6 @@ export class StudentsService {
               'profile_images',
             );
             profileImageUrl = profileUpload.secure_url;
-            break;
-
-          case 'backgroundImage':
-            const backgroundUpload = await this.cloudinaryService.uploadFile(
-              file,
-              'background_images',
-            );
-            backgroundImageUrl = backgroundUpload.secure_url;
             break;
 
           case 'documents':
@@ -440,7 +431,6 @@ export class StudentsService {
         phoneNumber: phoneNumber ?? undefined,
         email: email ?? undefined,
         profileImageUrl: profileImageUrl ?? undefined,
-        backgroundImageUrl: backgroundImageUrl ?? undefined,
         documentUrls: documentUrls ?? undefined,
         password: password ? await encryptString(password) : undefined,
       });

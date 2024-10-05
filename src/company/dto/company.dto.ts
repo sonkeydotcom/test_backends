@@ -35,6 +35,20 @@ export class companyDto {
   address: string;
 }
 
+export class UpdateCompanyProfileDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  phone: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  website: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  address: string;
+}
+
 export class companyLoginDto {
   @ApiProperty()
   @IsEmail()

@@ -31,9 +31,24 @@ export class Company {
   @Column()
   year_founded: string;
 
+  @Column({ nullable: true })
+  student_capaity: number;
+
+  @Column({ nullable: true })
+  phone: number;
+
   @Index()
   @Column()
   rc_number: string;
+
+  @Column({ nullable: true })
+  website: string;
+
+  @Column({ nullable: true })
+  profileImageUrl: string;
+
+  @Column({ nullable: true })
+  backgroundImageUrl: string;
 
   @Column()
   address: string;

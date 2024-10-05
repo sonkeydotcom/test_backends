@@ -10,11 +10,12 @@ import { Student } from 'src/students/entity/student.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { AppliedStudents } from './entity/applied-applicants.entity';
 import { PassportModule } from '@nestjs/passport';
-
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 @Module({
   controllers: [CompanyController],
   providers: [CompanyService],
   imports: [
+    CloudinaryModule,
     TypeOrmModule.forFeature([
       Company,
       Jobs,
