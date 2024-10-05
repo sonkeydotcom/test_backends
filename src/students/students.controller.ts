@@ -25,7 +25,7 @@ import {
 } from './dto/student.dto';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { Student } from './entity/student.entity';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FilesFieldsInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Student')
 @Controller('student')
@@ -121,7 +121,20 @@ export class StudentsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FilesInterceptor('files', 10, {}))
+  @UseInterceptors(
+    FilesFieldsInterceptor(
+      [
+        { name: 'profileImage', maxCount: 1 },
+        { name: 'backgroundImage', maxCount: 1 },
+        { name: 'documents', maxCount: 8 },
+      ],
+      {
+        limits: {
+          fileSize: 5 * 1024 * 1024,
+        },
+      },
+    ),
+  )
   updateStudentProfile(
     @Body()
     dto: UpdateStudentProfileDto,
@@ -135,9 +148,19 @@ export class StudentsController {
         fileIsRequired: false,
       }),
     )
-    files: Express.Multer.File[],
+    files: {
+      profileImage?: Express.Multer.File[];
+      backgroundImage?: Express.Multer.File[];
+      documents?: Express.Multer.File[];
+    },
   ) {
-    return this.studentsService.updateStudentProfile(dto, student, files);
+    const allFiles: Express.Multer.File[] = [
+      ...(files.profileImage || []),
+      ...(files.backgroundImage || []),
+      ...(files.documents || []),
+    ];
+
+    return this.studentsService.updateStudentProfile(dto, student, allFiles);
   }
 
   @Get('/onboard')
