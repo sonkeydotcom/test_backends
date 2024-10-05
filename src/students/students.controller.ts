@@ -122,18 +122,11 @@ export class StudentsController {
   @UseGuards(AuthGuard())
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
-    FileFieldsInterceptor(
-      [
-        { name: 'profileImage', maxCount: 1 },
-        { name: 'backgroundImage', maxCount: 1 },
-        { name: 'documents', maxCount: 8 },
-      ],
-      {
-        limits: {
-          fileSize: 5 * 1024 * 1024,
-        },
-      },
-    ),
+    FileFieldsInterceptor([
+      { name: 'profileImage', maxCount: 1 },
+      { name: 'backgroundImage', maxCount: 1 },
+      { name: 'documents', maxCount: 1 },
+    ]),
   )
   updateStudentProfile(
     @Body()
@@ -142,7 +135,7 @@ export class StudentsController {
     @UploadedFiles(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 5000000 }), // max set to 5mb
+          new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // max set to 5mb
           new FileTypeValidator({ fileType: /\/(jpg|jpeg|png|pdf)$/ }),
         ],
         fileIsRequired: false,
