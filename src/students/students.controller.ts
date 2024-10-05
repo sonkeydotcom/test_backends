@@ -135,7 +135,7 @@ export class StudentsController {
     @UploadedFiles(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // max set to 5mb
+          new MaxFileSizeValidator({ maxSize: 100 * 1024 * 1024 }), // max set to 5mb
           new FileTypeValidator({ fileType: /\/(jpg|jpeg|png|pdf)$/ }),
         ],
         fileIsRequired: false,
