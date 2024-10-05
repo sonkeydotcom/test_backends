@@ -25,7 +25,7 @@ import {
 } from './dto/student.dto';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { Student } from './entity/student.entity';
-import { FilesFieldsInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Student')
 @Controller('student')
@@ -122,7 +122,7 @@ export class StudentsController {
   @UseGuards(AuthGuard())
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
-    FilesFieldsInterceptor(
+    FileFieldsInterceptor(
       [
         { name: 'profileImage', maxCount: 1 },
         { name: 'backgroundImage', maxCount: 1 },
