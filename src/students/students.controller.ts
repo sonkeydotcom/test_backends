@@ -122,25 +122,31 @@ export class StudentsController {
   @UseGuards(AuthGuard())
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'profileImage', maxCount: 1 },
-      { name: 'backgroundImage', maxCount: 1 },
-      { name: 'documents', maxCount: 1 },
-    ]),
+    FileFieldsInterceptor(
+      [
+        { name: 'profileImage', maxCount: 1 },
+        { name: 'backgroundImage', maxCount: 1 },
+        { name: 'documents', maxCount: 1 },
+      ],
+      {
+        fileFilter: (req, file, cb) => {
+          if (file.mimetype.match(/\/(jpg|jpeg|png|pdf)$/)) {
+            cb(null, true);
+          } else {
+            cb(new Error('Unsupported file type'), false);
+          }
+        },
+        limits: {
+          fileSize: 110 * 1024 * 1024, // 110 MB
+        },
+      },
+    ),
   )
   updateStudentProfile(
     @Body()
     dto: UpdateStudentProfileDto,
     @GetUser() student: Student,
-    @UploadedFiles(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 100 * 1024 * 1024 }), // max set to 5mb
-          new FileTypeValidator({ fileType: /\/(jpg|jpeg|png|pdf)$/ }),
-        ],
-        fileIsRequired: false,
-      }),
-    )
+    @UploadedFiles()
     files: {
       profileImage?: Express.Multer.File[];
       backgroundImage?: Express.Multer.File[];
