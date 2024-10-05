@@ -7,7 +7,7 @@ import {
   ParseFilePipe,
   Post,
   Query,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -25,8 +25,7 @@ import {
 } from './dto/student.dto';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { Student } from './entity/student.entity';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Student')
 @Controller('student')
@@ -122,18 +121,12 @@ export class StudentsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: 'uploads/student',
-        filename: (req, file, cb) => {
-          cb(null, file.originalname);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FilesInterceptor('files', 10, {}))
   updateStudentProfile(
-    @UploadedFile(
+    @Body()
+    dto: UpdateStudentProfileDto,
+    @GetUser() student: Student,
+    @UploadedFiles(
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 5000000 }), // max set to 5mb
@@ -142,12 +135,9 @@ export class StudentsController {
         fileIsRequired: false,
       }),
     )
-    file: Express.Multer.File,
-    @Query()
-    dto: UpdateStudentProfileDto,
-    @GetUser() student: Student,
+    files: Express.Multer.File[],
   ) {
-    return this.studentsService.updateStudentProfile(dto, student, file);
+    return this.studentsService.updateStudentProfile(dto, student, files);
   }
 
   @Get('/onboard')

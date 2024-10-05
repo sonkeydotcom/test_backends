@@ -9,12 +9,13 @@ import { Jobs } from 'src/company/entity/jobs.entity';
 import { Company } from 'src/company/entity/company.entity';
 import { SavedApplications } from './entity/saved.entity';
 import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
-
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 @Module({
   controllers: [StudentsController],
   providers: [StudentsService],
   imports: [
     AuthModule,
+    CloudinaryModule,
     TypeOrmModule.forFeature([
       Student,
       Jobs,

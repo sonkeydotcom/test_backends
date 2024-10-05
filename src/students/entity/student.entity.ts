@@ -42,7 +42,13 @@ export class Student {
   bio: string;
 
   @Column({ nullable: true })
-  imagePath: string;
+  profileImageUrl: string;
+
+  @Column({ nullable: true })
+  backgroundImageUrl: string;
+
+  @Column('simple-array', { nullable: true })
+  documentUrls: string; // Stores multiple document URLs
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdDate: Date;

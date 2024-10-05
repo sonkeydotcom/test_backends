@@ -25,6 +25,7 @@ import { extname } from 'path';
 import { data } from 'src/dummy';
 import { Company } from '../company/entity/company.entity';
 import { SavedApplications } from './entity/saved.entity';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class StudentsService {
@@ -39,6 +40,7 @@ export class StudentsService {
     private applyJobsRepository: Repository<AppliedStudents>,
     @InjectRepository(SavedApplications)
     private savedApplicationsRepository: Repository<SavedApplications>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async getCountStudent(
@@ -390,21 +392,56 @@ export class StudentsService {
   async updateStudentProfile(
     dto: UpdateStudentProfileDto,
     student: Student,
-    file: Express.Multer.File,
+    files: Express.Multer.File[],
   ): Promise<globalApiResponseDto> {
     try {
       const { bio, email, firstName, lastName, phoneNumber, password } = dto;
 
-      const name = file.originalname.split('.')[0];
-      const ext = extname(file.originalname);
-      const fileName = `${student.matriculationNumber}_${name}_${ext}`;
+      let profileImageUrl: string | undefined;
+      let backgroundImageUrl: string | undefined;
+      let documentUrls: string | undefined;
+
+      for (const file of files) {
+        if (!file) continue;
+
+        const ext = extname(file.originalname).toLowerCase();
+
+        switch (file.fieldname) {
+          case 'profileImage':
+            const profileUpload = await this.cloudinaryService.uploadFile(
+              file,
+              'profile_images',
+            );
+            profileImageUrl = profileUpload.secure_url;
+            break;
+
+          case 'backgroundImage':
+            const backgroundUpload = await this.cloudinaryService.uploadFile(
+              file,
+              'background_images',
+            );
+            backgroundImageUrl = backgroundUpload.secure_url;
+            break;
+
+          case 'documents':
+            const documentUpload = await this.cloudinaryService.uploadFile(
+              file,
+              'documents',
+            );
+            documentUrls = documentUpload.secure_url;
+            break;
+        }
+      }
+
       await this.studentRepository.update(student.id, {
         lastName: lastName ?? undefined,
         bio: bio ?? undefined,
         firstName: firstName ?? undefined,
         phoneNumber: phoneNumber ?? undefined,
         email: email ?? undefined,
-        imagePath: fileName ?? undefined,
+        profileImageUrl: profileImageUrl ?? undefined,
+        backgroundImageUrl: backgroundImageUrl ?? undefined,
+        documentUrls: documentUrls ?? undefined,
         password: password ? await encryptString(password) : undefined,
       });
 
