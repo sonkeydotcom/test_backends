@@ -38,7 +38,7 @@ export class companyDto {
 export class UpdateCompanyProfileDto {
   @ApiProperty({ required: false })
   @IsOptional()
-  phone: number;
+  phone: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

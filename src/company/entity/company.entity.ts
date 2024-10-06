@@ -35,7 +35,7 @@ export class Company {
   student_capacity: number;
 
   @Column({ nullable: true })
-  phone: number;
+  phone: string;
 
   @Index()
   @Column()
