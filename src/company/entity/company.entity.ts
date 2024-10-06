@@ -32,7 +32,7 @@ export class Company {
   year_founded: string;
 
   @Column({ nullable: true })
-  student_capaity: number;
+  student_capacity: number;
 
   @Column({ nullable: true })
   phone: number;
