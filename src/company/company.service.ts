@@ -703,6 +703,10 @@ export class CompanyService {
 
       for (const file of files) {
         if (!file) continue;
+        if (!file.fieldname) {
+          console.warn('File without fieldname encountered:', file);
+          continue;
+        }
 
         const ext = extname(file.originalname).toLowerCase();
 

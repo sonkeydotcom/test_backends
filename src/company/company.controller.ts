@@ -71,7 +71,6 @@ export class CompanyController {
       [
         { name: 'profileImage', maxCount: 1 },
         { name: 'backgroundImage', maxCount: 1 },
-        { name: 'documents', maxCount: 1 },
       ],
       {
         fileFilter: (req, file, cb) => {
@@ -87,7 +86,7 @@ export class CompanyController {
       },
     ),
   )
-  updateStudentProfile(
+  updateCompanyProfile(
     @Body()
     dto: UpdateCompanyProfileDto,
     @GetUser() company: Company,
@@ -95,14 +94,17 @@ export class CompanyController {
     files: {
       profileImage?: Express.Multer.File[];
       backgroundImage?: Express.Multer.File[];
-      documents?: Express.Multer.File[];
     },
   ) {
-    const allFiles: Express.Multer.File[] = [
-      ...(files.profileImage || []),
-      ...(files.backgroundImage || []),
-      ...(files.documents || []),
-    ];
+    const allFiles: Express.Multer.File[] = [];
+
+    if (files && files.profileImage) {
+      allFiles.push(...files.profileImage);
+    }
+
+    if (files && files.backgroundImage) {
+      allFiles.push(...files.backgroundImage);
+    }
 
     return this.companyService.updateCompanyProfile(dto, company, allFiles);
   }

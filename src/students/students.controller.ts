@@ -94,9 +94,12 @@ export class StudentsController {
   @Post('/saved/applications')
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
-  saveApplication(@GetUser() student: Student, @Body() body: { id: string }) {
-    const { id } = body; // Extract the `id` field from the body object
-    return this.studentsService.saveApplication(student, id);
+  saveApplication(
+    @GetUser() student: Student,
+    @Body() body: { jobId: string },
+  ) {
+    const { jobId } = body; // Extract the `id` field from the body object
+    return this.studentsService.saveApplication(student, jobId);
   }
 
   @Get('/saved/applications')
@@ -125,7 +128,6 @@ export class StudentsController {
     FileFieldsInterceptor(
       [
         { name: 'profileImage', maxCount: 1 },
-        { name: 'backgroundImage', maxCount: 1 },
         { name: 'documents', maxCount: 1 },
       ],
       {
@@ -149,15 +151,18 @@ export class StudentsController {
     @UploadedFiles()
     files: {
       profileImage?: Express.Multer.File[];
-      backgroundImage?: Express.Multer.File[];
       documents?: Express.Multer.File[];
     },
   ) {
-    const allFiles: Express.Multer.File[] = [
-      ...(files.profileImage || []),
-      ...(files.backgroundImage || []),
-      ...(files.documents || []),
-    ];
+    const allFiles: Express.Multer.File[] = [];
+
+    if (files && files.profileImage) {
+      allFiles.push(...files.profileImage);
+    }
+
+    if (files && files.documents) {
+      allFiles.push(...files.documents);
+    }
 
     return this.studentsService.updateStudentProfile(dto, student, allFiles);
   }

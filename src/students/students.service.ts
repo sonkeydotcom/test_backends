@@ -222,12 +222,8 @@ export class StudentsService {
       }
 
       const saveApplication = this.savedApplicationsRepository.create({
-        job: {
-          id: jobId,
-        },
-        student: {
-          id: student.id,
-        },
+        job,
+        student: student,
       });
 
       await this.savedApplicationsRepository.save(saveApplication);
@@ -372,12 +368,8 @@ export class StudentsService {
       }
 
       const applyJ = this.applyJobsRepository.create({
-        job: {
-          id: jobId,
-        },
-        student: {
-          id: student.id,
-        },
+        job: getJob, // Pass the full job entity
+        student: student, // Pass the full student entity
       });
       await this.applyJobsRepository.save(applyJ);
       return {
@@ -478,7 +470,7 @@ export class StudentsService {
       if (!student) {
         // If no student is found, return a "not found" message
         throw new NotFoundException(
-          `Student with the provided ${matriculation} number was not found`,
+          `Student data not found`,
         );
       }
 

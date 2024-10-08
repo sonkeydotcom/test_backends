@@ -1,10 +1,12 @@
 export const data = [
   {
     id: 1,
-    name: 'John Doe',
+    firstName: 'John',
+lastName: 'Doe',
     course: 'Chemical Engineering',
     matriculation: 'CHE/123/456',
     phone: '08012345678',
+school: 'Kadpoly'
   },
   {
     id: 2,
