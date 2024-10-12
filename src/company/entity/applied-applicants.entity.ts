@@ -25,7 +25,7 @@ export class AppliedStudents {
   // job: Jobs;
 
   @ManyToOne(() => Jobs, (job) => job.appliedStudent)
-  job: Jobs; // Change this to ManyToOne to properly reflect the relationship
+  job: Jobs;
 
   @Column({
     type: 'boolean',

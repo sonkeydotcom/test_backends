@@ -12,6 +12,7 @@ import {
 import { CompanyService } from './company.service';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import {
+  acceptDto,
   companyDto,
   companyLoginDto,
   UpdateCompanyProfileDto,
@@ -154,23 +155,15 @@ export class CompanyController {
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
   @Post('/applicants/accept/')
-  acceptStudent(
-    @GetUser() company: Company,
-    @Body() body: { studentId: string },
-  ) {
-    const { studentId } = body; // Extract the `id` field from the body object
-    return this.companyService.acceptStudent(company, studentId);
+  acceptStudent(@GetUser() company: Company, @Body() dto: acceptDto) {
+    return this.companyService.acceptStudent(company, dto);
   }
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
-  @Post('/applicants/shortlist/:studentId')
-  shortlistStudent(
-    @GetUser() company: Company,
-    @Body() body: { studentId: string },
-  ) {
-    const { studentId } = body; // Extract the `id` field from the body object
-    return this.companyService.shortlistStudent(company, studentId);
+  @Post('/applicants/shortlist/')
+  shortlistStudent(@GetUser() company: Company, @Body() dto: acceptDto) {
+    return this.companyService.shortlistStudent(company, dto);
   }
 
   // @UseGuards(AuthGuard())
@@ -185,12 +178,8 @@ export class CompanyController {
 
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
-  @Post('/applicants/decline/:studentId')
-  declineStudent(
-    @GetUser() company: Company,
-    @Body() body: { studentId: string },
-  ) {
-    const { studentId } = body; // Extract the `id` field from the body object
-    return this.companyService.declineStudent(company, studentId);
+  @Post('/applicants/decline')
+  declineStudent(@GetUser() company: Company, @Body() dto: acceptDto) {
+    return this.companyService.declineStudent(company, dto);
   }
 }

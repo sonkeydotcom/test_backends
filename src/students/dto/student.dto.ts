@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsEnum,
+  IsNotEmpty,
   IsOptional,
   IsString,
   isEmail,
@@ -32,6 +33,16 @@ export class CreateStudentDto {
   @ApiProperty()
   @IsString()
   school: string;
+}
+
+export class jobApplyDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  jobId: string;
+
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // jobId: string;
 }
 
 export class StudentDto {

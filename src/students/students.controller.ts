@@ -18,6 +18,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from 'src/auth/entities/users.entity';
 import { RoleGuard, Roles } from 'src/auth/guard/roles.guard';
 import {
+  jobApplyDto,
   JobSearchDto,
   StudentDto,
   StudentOnboarding,
@@ -46,9 +47,8 @@ export class StudentsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @Post('/job/apply')
-  applyJob(@GetUser() student: Student, @Body() body: { id: string }) {
-    const { id } = body; // Extract the `id` field from the body object
-    return this.studentsService.applyForJob(student, id);
+  applyJob(@GetUser() student: Student, @Body() dto: jobApplyDto) {
+    return this.studentsService.applyForJob(student, dto);
   }
 
   @Get('/admin/data')
@@ -94,12 +94,8 @@ export class StudentsController {
   @Post('/saved/applications')
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
-  saveApplication(
-    @GetUser() student: Student,
-    @Body() body: { jobId: string },
-  ) {
-    const { jobId } = body; // Extract the `id` field from the body object
-    return this.studentsService.saveApplication(student, jobId);
+  saveApplication(@GetUser() student: Student, @Body() dto: jobApplyDto) {
+    return this.studentsService.saveApplication(student, dto);
   }
 
   @Get('/saved/applications')

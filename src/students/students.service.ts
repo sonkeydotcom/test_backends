@@ -11,6 +11,7 @@ import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
 import { globalPaginationHelper } from 'src/core/helpers/paginationHelper';
 import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
 import {
+  jobApplyDto,
   JobSearchDto,
   StudentDto,
   StudentOnboarding,
@@ -186,9 +187,10 @@ export class StudentsService {
 
   async saveApplication(
     student: Student,
-    jobId: string,
+    dto: jobApplyDto,
   ): Promise<globalApiResponseDto> {
     try {
+      const { jobId } = dto;
       // Check if the job exists
       const job = await this.jobsRepository.findOne({
         where: {
@@ -335,9 +337,10 @@ export class StudentsService {
 
   async applyForJob(
     student: Student,
-    jobId: string,
+    dto: jobApplyDto,
   ): Promise<globalApiResponseDto> {
     try {
+      const { jobId } = dto;
       const getJob = await this.jobsRepository.findOne({
         where: {
           id: jobId,
@@ -371,10 +374,12 @@ export class StudentsService {
         job: getJob, // Pass the full job entity
         student: student, // Pass the full student entity
       });
+      applyJ.accepted = true;
       await this.applyJobsRepository.save(applyJ);
       return {
         message: 'job applied successful',
         statusCode: HttpStatus.CREATED,
+        data: applyJ,
       };
     } catch (err) {
       return coreErrorHelper(err);
@@ -469,9 +474,7 @@ export class StudentsService {
 
       if (!student) {
         // If no student is found, return a "not found" message
-        throw new NotFoundException(
-          `Student data not found`,
-        );
+        throw new NotFoundException(`Student data not found`);
       }
 
       // If a student is found, return their details along with the message

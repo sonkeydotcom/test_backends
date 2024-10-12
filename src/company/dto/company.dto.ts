@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class companyDto {
   @ApiProperty()
@@ -47,6 +47,16 @@ export class UpdateCompanyProfileDto {
   @ApiProperty({ required: false })
   @IsOptional()
   address: string;
+}
+
+export class acceptDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  studentId: string;
+
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // jobId: string;
 }
 
 export class companyLoginDto {

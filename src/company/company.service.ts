@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entity/company.entity';
 import { Repository } from 'typeorm';
 import {
+  acceptDto,
   companyDto,
   companyLoginDto,
   UpdateCompanyProfileDto,
@@ -418,13 +419,16 @@ export class CompanyService {
 
   async acceptStudent(
     company: Company,
-    studentId: string,
+    dto: acceptDto,
   ): Promise<globalApiResponseDto> {
     try {
+      const { studentId } = dto;
       // Find the applied student by ID
       const appliedStudent = await this.applyJobsRepository.findOne({
         where: {
-          id: studentId,
+         student: {
+           id: studentId,
+         },
           job: {
             company: {
               id: company.id,
@@ -468,6 +472,9 @@ export class CompanyService {
         },
       });
 
+      appliedStudent.accepted = true;
+      await this.applyJobsRepository.save(appliedStudent);
+
       // Save the accepted applicant
       await this.acceptedApplicantsRepository.save(acceptedApplicant);
 
@@ -488,9 +495,10 @@ export class CompanyService {
 
   async shortlistStudent(
     company: Company,
-    studentId: string,
+    dto: acceptDto,
   ): Promise<globalApiResponseDto> {
     try {
+      const { studentId } = dto;
       // Find the applied student by ID
       const appliedStudent = await this.applyJobsRepository.findOne({
         where: {
@@ -625,9 +633,10 @@ export class CompanyService {
 
   async declineStudent(
     company: Company,
-    studentId: string,
+    dto: acceptDto,
   ): Promise<globalApiResponseDto> {
     try {
+      const { studentId } = dto;
       // Find the applied student by ID
       const appliedStudent = await this.applyJobsRepository.findOne({
         where: {
