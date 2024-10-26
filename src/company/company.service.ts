@@ -426,9 +426,9 @@ export class CompanyService {
       // Find the applied student by ID
       const appliedStudent = await this.applyJobsRepository.findOne({
         where: {
-         student: {
-           id: studentId,
-         },
+          student: {
+            id: studentId,
+          },
           job: {
             company: {
               id: company.id,
@@ -749,6 +749,7 @@ export class CompanyService {
       return {
         statusCode: HttpStatus.OK,
         message: 'successful',
+        data: company,
       };
     } catch (err) {
       return coreErrorHelper(err);
