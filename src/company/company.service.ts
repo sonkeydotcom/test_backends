@@ -705,7 +705,7 @@ export class CompanyService {
     files: Express.Multer.File[],
   ): Promise<globalApiResponseDto> {
     try {
-      const { phone, website, address } = dto;
+      const { phone, website, address, student_capacity } = dto;
 
       let profileImageUrl: string | undefined;
       let backgroundImageUrl: string | undefined;
@@ -744,6 +744,7 @@ export class CompanyService {
         address: address ?? undefined,
         profileImageUrl: profileImageUrl ?? undefined,
         backgroundImageUrl: backgroundImageUrl ?? undefined,
+        student_capacity: student_capacity,
       });
 
       return {

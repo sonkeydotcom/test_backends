@@ -47,6 +47,10 @@ export class UpdateCompanyProfileDto {
   @ApiProperty({ required: false })
   @IsOptional()
   address: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  student_capacity: number;
 }
 
 export class acceptDto {
