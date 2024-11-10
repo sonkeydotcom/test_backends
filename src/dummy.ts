@@ -2,11 +2,11 @@ export const data = [
   {
     id: 1,
     firstName: 'John',
-lastName: 'Doe',
+    lastName: 'Doe',
     course: 'Chemical Engineering',
     matriculation: 'CHE/123/456',
     phone: '08012345678',
-school: 'Kadpoly'
+    school: 'Kadpoly',
   },
   {
     id: 2,

@@ -18,6 +18,7 @@ import { Company } from 'src/company/entity/company.entity';
 import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
 import { Student } from 'src/students/entity/student.entity';
 import { CreateStudentDto } from 'src/students/dto/student.dto';
+import { data } from 'src/dummy';
 
 @Injectable()
 export class AuthService {
@@ -199,6 +200,16 @@ export class AuthService {
       });
       if (findStudent) {
         throw new ForbiddenException('student email already exist');
+      }
+
+      const existingMatric = data.find(
+        (student) =>
+          student.matriculation &&
+          student.matriculation.toUpperCase() ===
+            matriculationNumber.toUpperCase(),
+      );
+      if (existingMatric) {
+        throw new ForbiddenException('Matriculation number already exists');
       }
 
       const createStudent = this.studentRepository.create({
