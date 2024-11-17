@@ -201,6 +201,18 @@ export class AuthService {
         throw new ForbiddenException('student email already exist');
       }
 
+      const existingMatriculation = await this.studentRepository.findOne({
+        where: {
+          matriculationNumber,
+        },
+      });
+
+      if (existingMatriculation) {
+        throw new ForbiddenException(
+          'student with matriculation number already exist',
+        );
+      }
+
       const createStudent = this.studentRepository.create({
         email,
         firstName,

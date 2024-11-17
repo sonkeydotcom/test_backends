@@ -375,7 +375,20 @@ export class StudentsService {
         student: student, // Pass the full student entity
       });
       applyJ.accepted = true;
+      // const company = await this.jobsRepository.findOne({
+      //   where: {
+      //     id: jobId,
+      //   },
+      //   relations: {
+      //     company: true,
+      //   },
+      // });
+
+      getJob.totalApplicants = (getJob.totalApplicants || 0) + 1;
+      // Save the application and update the company
       await this.applyJobsRepository.save(applyJ);
+      await this.jobsRepository.save(getJob);
+
       return {
         message: 'job applied successful',
         statusCode: HttpStatus.CREATED,
