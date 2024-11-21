@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { getDataSourcePrefix, InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entity/student.entity';
 import { Not, IsNull, Repository, Between, Like } from 'typeorm';
 import { GlobalPaginationDto } from 'src/core/dto/pagination.dto';
@@ -27,10 +27,13 @@ import { data } from 'src/dummy';
 import { Company } from '../company/entity/company.entity';
 import { SavedApplications } from './entity/saved.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { AcceptedApplicants } from 'src/company/entity/accepted-applicant.entity';
 
 @Injectable()
 export class StudentsService {
   constructor(
+    @InjectRepository(AcceptedApplicants)
+    private acceptedRepository: Repository<AcceptedApplicants>,
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
     @InjectRepository(Company)
@@ -170,6 +173,13 @@ export class StudentsService {
         location: `${application.job?.address || 'N/A'}, ${application.job?.city || 'N/A'}, ${application.job?.state || 'N/A'}`,
         numberOfApplicants: application.job?.totalApplicants || 0,
         industry: application.job?.industry || 'N/A',
+        capacity: application.job?.company?.student_capacity || 0,
+        website: application.job?.company?.website || 'N/A',
+        founded: application.job?.company?.year_founded || 'N/A',
+        profileImage: application.job?.company?.profileImageUrl || 'N/A',
+        backgroundImage: application.job?.company?.backgroundImageUrl || 'N/A',
+        email: application.job?.company?.email || 'N/A',
+        rcNumber: application.job?.company?.rc_number || 'N/A',
       }));
 
       return {
@@ -494,6 +504,43 @@ export class StudentsService {
       return {
         message: 'found',
         data: student,
+      };
+    } catch (error) {
+      return coreErrorHelper(error);
+    }
+  }
+
+  async getStudentCurrentIt2(student: Student): Promise<globalApiResponseDto> {
+    try {
+      const acceptedApplicant = await this.acceptedRepository.find({
+        where: {
+          students: { id: student.id },
+        },
+        relations: ['jobs', 'jobs.company'], // Include related job information
+      });
+
+      const mappedData = acceptedApplicant.map((hello) => ({
+        id: hello.id,
+        name: hello.jobs.company.name,
+        industry: hello.jobs.industry,
+        startDate: hello.jobs.createdDate,
+        founded: hello.jobs.company.year_founded,
+        duration: hello.jobs.duration,
+        location: `${hello.jobs.address}, ${hello.jobs.city}, ${hello.jobs.state}`,
+        capacity: hello.jobs.company.student_capacity,
+        website: hello.jobs.company.website,
+        description: hello.jobs.company.description,
+        totalApplicants: hello.jobs.totalApplicants,
+        backgroundImage: hello.jobs.company.backgroundImageUrl,
+        profileImage: hello.jobs.company.profileImageUrl,
+      }));
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: acceptedApplicant
+          ? 'Accepted applicant found'
+          : 'No accepted applicant found',
+        data: mappedData,
       };
     } catch (error) {
       return coreErrorHelper(error);

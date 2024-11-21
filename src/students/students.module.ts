@@ -10,6 +10,7 @@ import { Company } from 'src/company/entity/company.entity';
 import { SavedApplications } from './entity/saved.entity';
 import { AppliedStudents } from 'src/company/entity/applied-applicants.entity';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { AcceptedApplicants } from 'src/company/entity/accepted-applicant.entity';
 @Module({
   controllers: [StudentsController],
   providers: [StudentsService],
@@ -22,6 +23,7 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
       SavedApplications,
       AppliedStudents,
       Company,
+      AcceptedApplicants,
     ]),
   ],
 })

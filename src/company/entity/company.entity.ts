@@ -53,6 +53,9 @@ export class Company {
   @Column()
   address: string;
 
+  @Column({ nullable: true })
+  description: string;
+
   @CreateDateColumn()
   createdDate: Date;
 

@@ -174,7 +174,7 @@ export class StudentsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   getCurrentJob(@GetUser() student: Student) {
-    return this.studentsService.getStudentCurrentIt(student);
+    return this.studentsService.getStudentCurrentIt2(student);
   }
 
   @Post('/check')
