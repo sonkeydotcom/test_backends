@@ -78,7 +78,6 @@ export class CompanyService {
 
       const createCompany = this.companyRepository.create({
         address: dto.address,
-        // companyId: dto.companyId,
         email: dto.email,
         password: await encryptString(dto.password),
         rc_number: dto.rc_number,
@@ -275,7 +274,7 @@ export class CompanyService {
           })),
           id: companies.id,
           name: companies.name,
-          companyId: companies.companyId,
+          // companyId: companies.companyId,
           email: companies.email,
           yearFounded: companies.year_founded,
           rc_number: companies.rc_number,
