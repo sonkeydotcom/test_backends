@@ -10,8 +10,8 @@ export class companyDto {
   @IsString()
   company_name: string;
 
-  @ApiProperty()
-  companyId: string;
+  // @ApiProperty()
+  // companyId: string;
 
   @ApiProperty()
   @IsString()

@@ -81,7 +81,7 @@ export class CompanyService {
 
       const createCompany = this.companyRepository.create({
         address: dto.address,
-        companyId: dto.companyId,
+        // companyId: dto.companyId,
         email: dto.email,
         password: await encryptString(dto.password),
         rc_number: dto.rc_number,
@@ -120,6 +120,11 @@ export class CompanyService {
           'the email address or password does not exist',
         );
       }
+
+      if (!findCompany.isVerified) {
+        throw new ForbiddenException('Company is not verified');
+      }
+
       if (findCompany) {
         const checkPassword = await compareHash(password, findCompany.password);
         if (!checkPassword) {

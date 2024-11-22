@@ -50,6 +50,11 @@ export class Company {
   @Column({ nullable: true })
   backgroundImageUrl: string;
 
+  @Column({
+    default: false,
+  })
+  isVerified: boolean;
+
   @Column()
   address: string;
 
