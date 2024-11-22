@@ -20,9 +20,6 @@ export class Company {
   name: string;
 
   @Column()
-  companyId: string;
-
-  @Column()
   email: string;
 
   @Column()
