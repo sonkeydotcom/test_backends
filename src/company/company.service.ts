@@ -73,10 +73,7 @@ export class CompanyService {
       });
 
       if (checkIf) {
-        return {
-          statusCode: HttpStatus.FORBIDDEN,
-          message: 'the company account already exist',
-        };
+        throw new ForbiddenException('The company account already exists');
       }
 
       const createCompany = this.companyRepository.create({
