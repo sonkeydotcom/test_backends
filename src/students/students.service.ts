@@ -415,7 +415,17 @@ export class StudentsService {
     files: Express.Multer.File[],
   ): Promise<globalApiResponseDto> {
     try {
-      const { bio, email, firstName, lastName, phoneNumber, password } = dto;
+      const {
+        bio,
+        email,
+        firstName,
+        lastName,
+        phoneNumber,
+        softSkills,
+        technicalSkills,
+        goals,
+        preferredIndustry,
+      } = dto;
 
       let profileImageUrl: string | undefined;
       let documentUrls: string | undefined;
@@ -450,9 +460,13 @@ export class StudentsService {
         firstName: firstName ?? undefined,
         phoneNumber: phoneNumber ?? undefined,
         email: email ?? undefined,
+        softSkills: softSkills ?? undefined,
         profileImageUrl: profileImageUrl ?? undefined,
+        technicalSkills: technicalSkills ?? undefined,
+        goals: goals ?? undefined,
+        preferredIndustry: preferredIndustry ?? undefined,
         documentUrls: documentUrls ?? undefined,
-        password: password ? await encryptString(password) : undefined,
+        // password: password ? await encryptString(password) : undefined,
       });
 
       return {

@@ -44,6 +44,21 @@ export class Student {
   @Column({ nullable: true })
   profileImageUrl: string;
 
+  @Column({ nullable: true })
+  address: string;
+
+  @Column('simple-array', { nullable: true })
+  softSkills: string[];
+
+  @Column('simple-array', { nullable: true })
+  technicalSkills: string[];
+
+  @Column({ nullable: true })
+  preferredIndustry: string;
+
+  @Column('simple-array', { nullable: true })
+  goals: string[];
+
   @Column('simple-array', { nullable: true })
   documentUrls: string; // Stores multiple document URLs
 

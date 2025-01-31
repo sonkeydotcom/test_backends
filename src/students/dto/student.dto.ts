@@ -5,7 +5,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  isEmail,
 } from 'class-validator';
 import { OrderEnum } from 'src/core/dto/pagination.dto';
 
@@ -111,7 +110,23 @@ export class UpdateStudentProfileDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  password: string;
+  softSkills: string[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  technicalSkills: string[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  preferredIndustry: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  goals: string[];
+
+  // @ApiProperty({ required: false })
+  // @IsOptional()
+  // password: string;
 }
 
 export class StudentOnboarding {
