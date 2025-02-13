@@ -13,14 +13,14 @@ import { MailService } from './mailer.service';
         transport: {
           host: config.get('MAILER_HOST'),
           port: config.get('MAILER_PORT'),
-          secure: false,
+          secure: config.get<number>('MAILER_PORT') === 465, // Use secure mode for port 46
           auth: {
             user: config.get('MAILER_USER'),
             pass: config.get('MAILER_PASSWORD'),
           },
         },
         defaults: {
-          from: `"I-Tapp" <${config.get('MAILER_DEFAULTS')}>`,
+          from: `"I-Tapp" <${config.get('MAILER_USER')}>`,
         },
       }),
     }),
