@@ -19,6 +19,7 @@ import { globalApiResponseDto } from 'src/core/dto/global-api.dto';
 import { Student } from 'src/students/entity/student.entity';
 import { CreateStudentDto } from 'src/students/dto/student.dto';
 import { data } from 'src/dummy';
+import { MailService } from 'src/email/mailer.service';
 
 @Injectable()
 export class AuthService {
@@ -67,6 +68,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
+    private readonly mailerService: MailService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(Company)
@@ -223,6 +225,7 @@ export class AuthService {
         password: await encryptString(password),
       });
       await this.studentRepository.save(createStudent);
+      await this.mailerService.sendWelcomeEmail(email, firstName);
       return {
         message: 'successful',
         data: createStudent,

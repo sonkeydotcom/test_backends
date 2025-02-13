@@ -9,10 +9,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './utils/auth.jwt-strategy';
 import { Company } from 'src/company/entity/company.entity';
 import { Student } from 'src/students/entity/student.entity';
+import { MailerConfigModule } from 'src/email/mailer.module';
+import { MailService } from 'src/email/mailer.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, MailService],
   imports: [
     TypeOrmModule.forFeature([User, Company, Student]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -26,6 +28,7 @@ import { Student } from 'src/students/entity/student.entity';
         },
       }),
     }),
+    MailerConfigModule,
   ],
   exports: [AuthService, PassportModule, JwtStrategy],
 })
