@@ -416,6 +416,39 @@ export class CompanyService {
     }
   }
 
+  async updateJob(
+    company: Company,
+    jobId: string, // Receive the job ID from the controller
+    dto: CreateJobDto,
+  ): Promise<globalApiResponseDto> {
+    try {
+      // Find the job by its ID and the company's ID
+      const existingJob = await this.jobRepository.findOne({
+        where: {
+          id: jobId,
+          company: { id: company.id },
+        },
+      });
+
+      if (!existingJob) {
+        throw new NotFoundException('Job not found');
+      }
+
+      // Update existing job with DTO data
+      Object.assign(existingJob, dto);
+
+      const updated = await this.jobRepository.save(existingJob);
+
+      return {
+        message: 'successful',
+        statusCode: HttpStatus.OK,
+        data: updated,
+      };
+    } catch (err) {
+      return coreErrorHelper(err);
+    }
+  }
+
   // Accept student
 
   async acceptStudent(

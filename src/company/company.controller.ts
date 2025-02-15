@@ -3,7 +3,9 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
+  Put,
   Query,
   UploadedFiles,
   UseGuards,
@@ -143,6 +145,17 @@ export class CompanyController {
   @Post('/job/new')
   createNewJob(@Body() dto: CreateJobDto, @GetUser() company: Company) {
     return this.companyService.createdNewJob(company, dto);
+  }
+
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+  @Put('/job/update/:jobId')
+  updateJob(
+    @GetUser() company: Company,
+    @Param('jobId') jobId: string,
+    @Body() dto: CreateJobDto,
+  ) {
+    return this.companyService.updateJob(company, jobId, dto);
   }
 
   @UseGuards(AuthGuard())
