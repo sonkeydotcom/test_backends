@@ -417,7 +417,6 @@ export class StudentsService {
     try {
       const {
         bio,
-        email,
         firstName,
         lastName,
         phoneNumber,
@@ -459,7 +458,6 @@ export class StudentsService {
         bio: bio ?? undefined,
         firstName: firstName ?? undefined,
         phoneNumber: phoneNumber ?? undefined,
-        email: email ?? undefined,
         softSkills: softSkills ?? undefined,
         profileImageUrl: profileImageUrl ?? undefined,
         technicalSkills: technicalSkills ?? undefined,
