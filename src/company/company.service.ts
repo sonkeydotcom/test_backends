@@ -199,6 +199,7 @@ export class CompanyService {
             },
           },
         },
+        select: ['id', 'accepted'],
         relations: {
           student: true,
         },
@@ -214,7 +215,7 @@ export class CompanyService {
             },
           },
           relations: {
-            students: true,
+            student: true,
           },
         });
 
@@ -327,13 +328,13 @@ export class CompanyService {
           })),
           acceptedStudents: data.jobs.map((v) => ({
             student: v?.acceptedApplicant.flatMap((v) => ({
-              studentId: v.students.id,
-              createdDate: v?.students.createdDate,
-              course: v?.students.courseOfStudy,
-              CGPA: v?.students.CGPA,
-              school: v?.students.school,
-              department: v?.students.department,
-              currentLevel: v?.students.level,
+              studentId: v.student.id,
+              createdDate: v?.student.createdDate,
+              course: v?.student.courseOfStudy,
+              CGPA: v?.student.CGPA,
+              school: v?.student.school,
+              department: v?.student.department,
+              currentLevel: v?.student.level,
             })),
           })),
         },
@@ -377,13 +378,13 @@ export class CompanyService {
           })),
           student: data.jobs.map((v) => ({
             student: v?.acceptedApplicant.flatMap((v) => ({
-              studentId: v.students.id,
-              createdDate: v?.students.createdDate,
-              course: v?.students.courseOfStudy,
-              CGPA: v?.students.CGPA,
-              school: v?.students.school,
-              department: v?.students.department,
-              currentLevel: v?.students.level,
+              studentId: v.student.id,
+              createdDate: v?.student.createdDate,
+              course: v?.student.courseOfStudy,
+              CGPA: v?.student.CGPA,
+              school: v?.student.school,
+              department: v?.student.department,
+              currentLevel: v?.student.level,
             })),
           })),
         },
@@ -481,7 +482,7 @@ export class CompanyService {
       // Check if the student is already accepted
       const existingAccepted = await this.acceptedApplicantsRepository.findOne({
         where: {
-          students: {
+          student: {
             id: studentId,
           },
           jobs: {
@@ -498,7 +499,7 @@ export class CompanyService {
 
       // Create a new accepted applicant entry
       const acceptedApplicant = this.acceptedApplicantsRepository.create({
-        students: {
+        student: {
           id: studentId,
         },
         jobs: {
@@ -693,7 +694,7 @@ export class CompanyService {
       // Optionally, check if the student has already been accepted or shortlisted
       const isAccepted = await this.acceptedApplicantsRepository.findOne({
         where: {
-          students: {
+          student: {
             id: studentId,
           },
           jobs: {

@@ -384,7 +384,7 @@ export class StudentsService {
         job: getJob, // Pass the full job entity
         student: student, // Pass the full student entity
       });
-      applyJ.accepted = true;
+      // applyJ.accepted = true;
       // const company = await this.jobsRepository.findOne({
       //   where: {
       //     id: jobId,
@@ -528,7 +528,7 @@ export class StudentsService {
     try {
       const acceptedApplicant = await this.acceptedRepository.find({
         where: {
-          students: { id: student.id },
+          student: { id: student.id },
         },
         relations: ['jobs', 'jobs.company'], // Include related job information
       });

@@ -89,7 +89,7 @@ export class Student {
   @OneToMany(() => ShortlistedApplicant, (sap) => sap.student)
   shortlistedApplicants: ShortlistedApplicant[];
 
-  @OneToMany(() => AcceptedApplicants, (acp) => acp.students)
+  @OneToMany(() => AcceptedApplicants, (acp) => acp.student)
   acceptedApplicants: AcceptedApplicants[];
 
   @Column({ default: false })

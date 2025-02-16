@@ -3,7 +3,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -25,7 +24,9 @@ export class AcceptedApplicants {
     nullable: true,
   })
   @JoinColumn({ name: 'studentId' })
-  students: Student;
+  student: Student;
+
+  // todo stduents
 
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedDate: Date;
