@@ -497,6 +497,12 @@ export class CompanyService {
         );
       }
 
+      const acceptanceDate = new Date();
+      const internshipDuration = appliedStudent.job.duration;
+      const internshipStart = new Date(acceptanceDate);
+      const internshipEnd = new Date(acceptanceDate);
+      internshipEnd.setMonth(internshipEnd.getMonth() + internshipDuration);
+
       // Create a new accepted applicant entry
       const acceptedApplicant = this.acceptedApplicantsRepository.create({
         student: {
@@ -505,6 +511,8 @@ export class CompanyService {
         jobs: {
           id: appliedStudent.job.id,
         },
+        startDate: internshipStart,
+        endDate: internshipEnd,
       });
 
       appliedStudent.accepted = true;
@@ -519,7 +527,11 @@ export class CompanyService {
       return {
         message: 'Student accepted successfully.',
         statusCode: HttpStatus.OK,
-        data: acceptedApplicant,
+        data: {
+          acceptedApplicant,
+          internshipStart: acceptanceDate,
+          internshipEnd,
+        },
       };
     } catch (error) {
       return coreErrorHelper(error);

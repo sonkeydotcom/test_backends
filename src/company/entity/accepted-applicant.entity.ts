@@ -1,4 +1,5 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
@@ -16,6 +17,18 @@ export class AcceptedApplicants {
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdDate: Date;
+
+  @Column({
+    type: 'timestamp with time zone',
+    nullable: true,
+  })
+  startDate: Date;
+
+  @Column({
+    type: 'timestamp with time zone',
+    nullable: true,
+  })
+  endDate: Date;
 
   @ManyToOne(() => Jobs, (jap) => jap.acceptedApplicant)
   jobs: Jobs;
