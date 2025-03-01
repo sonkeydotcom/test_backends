@@ -202,6 +202,7 @@ export class CompanyService {
         select: ['id', 'accepted'],
         relations: {
           student: true,
+          job: true,
         },
       });
 
@@ -233,11 +234,31 @@ export class CompanyService {
           },
         });
 
+      const acceptedMap = new Map(
+        acceptedApplicants[0].map((applicant) => [
+          applicant.student.id,
+          applicant,
+        ]),
+      );
+
+      // Merge startDate and endDate into totalApplicants
+      const formattedApplicants = totalApplicants[0].map((applicant) => {
+        const acceptedData = acceptedMap.get(applicant.student.id); // Find in acceptedMap
+
+        return {
+          id: applicant.id,
+          accepted: applicant.accepted,
+          startDate: acceptedData?.startDate || null, // Use accepted data if available
+          endDate: acceptedData?.endDate || null,
+          student: applicant.student,
+        };
+      });
+
       return {
         message: 'successful',
         statusCode: HttpStatus.OK,
         data: {
-          totalApplicants,
+          totalApplicants: [formattedApplicants, totalApplicants[1]],
           acceptedApplicants,
           shortListedApplicants,
         },
